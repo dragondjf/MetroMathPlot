@@ -1,0 +1,115 @@
+/* Metro Style*/
+QPushButton {
+    background: green;
+}
+
+
+QPushButton:hover, QPushButton:pressed , QPushButton:checked
+{
+	background-color: rgb(85, 170, 255);
+	text-align: center;
+	padding-right: 20px;
+	font-weight:100
+}
+
+QPushButton:hover
+{
+	/*background-image: url(skin/icons/dark/appbar.arrow.left.png);*/
+	background-repeat:no-repeat;
+	background-position: center left;
+}
+QPushButton:pressed, QPushButton:checked
+{
+	/*background-image: url(skin/icons/light/appbar.arrow.left.png);*/
+	background-repeat:no-repeat;
+	background-position: center right;
+}
+
+
+QPushButton#NavigationButton {
+   width: 100px; 
+   height: 50px;
+   /*background: green;*/
+}
+
+QPushButton#NavigationButton:hover, QPushButton#NavigationButton:pressed , QPushButton#NavigationButton:checked
+{
+	background-color: rgb(85, 170, 255);
+	text-align: center;
+	padding-right: 20px;
+	font-weight:100
+}
+
+QPushButton#NavigationButton:hover
+{
+	background-image: url(skin/icons/dark/appbar.arrow.left.png);
+	background-repeat:no-repeat;
+	background-position: center left;
+}
+QPushButton#NavigationButton:pressed, QPushButton#NavigationButton:checked
+{
+	background-image: url(skin/icons/light/appbar.arrow.left.png);
+	background-repeat:no-repeat;
+	background-position: center right;
+}
+
+
+QPushButton#BackButton {
+   width: 100px; 
+   height: 50px;
+   /*background: green;*/
+}
+
+QPushButton#BackButton:hover, QPushButton#BackButton:pressed , QPushButton#BackButton:checked
+{
+	background-color: rgb(85, 170, 255);
+	text-align: center;
+	padding-right: 20px;
+	font-weight:100
+}
+
+QPushButton#BackButton:hover
+{
+	background-image: url(skin/icons/dark/appbar.arrow.left.png);
+	background-repeat:no-repeat;
+	background-position: center left;
+}
+QPushButton#BackButton:pressed, QPushButton#BackButton:checked
+{
+	background-image: url(skin/icons/light/appbar.arrow.left.png);
+	background-repeat:no-repeat;
+	background-position: center right;
+}
+
+
+QPushButton#ForwardButton {
+   width: 100px; 
+   height: 50px;
+   /*background: green;*/
+}
+
+QPushButton#ForwardButton:hover, QPushButton#ForwardButton:pressed , QPushButton#ForwardButton:checked
+{
+	background-color: rgb(85, 170, 255);
+	text-align: center;
+	padding-right: 20px;
+	font-weight:100
+}
+/*QPushButton#ForwardButton
+{
+	background-image: url(skin/icons/dark/appbar.arrow.right.png);
+	background-repeat:no-repeat;
+	background-position: center top;
+}*/
+QPushButton#ForwardButton:hover
+{
+	background-image: url(skin/icons/dark/appbar.arrow.right.png);
+	background-repeat:no-repeat;
+	background-position: center right;
+}
+QPushButton#ForwardButton:pressed, QPushButton#ForwardButton:checked
+{
+	background-image: url(skin/icons/light/appbar.arrow.right.png);
+	background-repeat:no-repeat;
+	background-position: center left;
+}
