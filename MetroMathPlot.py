@@ -49,12 +49,73 @@ def set_skin(QApplication, qssfile, style=''):
     qss.close()
 
 
-class NavigationWidget(QtGui.QWidget):
+class ContextMenu(QtGui.QWidget):
     def __init__(self, parent=None):
-        super(NavigationWidget, self).__init__(parent)
+        super(ContextMenu, self).__init__(parent)
+        self.parent = parent
+        self.createContextMenu()
+
+    def createContextMenu(self):
+        '''
+        创建右键菜单
+        '''
+        # 必须将ContextMenuPolicy设置为Qt.CustomContextMenu
+        # 否则无法使用customContextMenuRequested信号
+        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.showContextMenu)
+
+        # 创建QMenu
+        self.contextMenu = QtGui.QMenu()
+        style_QMenu1 = "QMenu {background-color: #ABABAB; border: 1px solid black;}"
+        style_QMenu2 = "QMenu::item {background-color: transparent;}"
+        style_QMenu3 = "QMenu::item:selected { /* when user selects item using mouse or keyboard */background-color: #654321;}"
+        style_QMenu = QtCore.QString(style_QMenu1 + style_QMenu2 + style_QMenu3)
+        self.contextMenu.setStyleSheet(style_QMenu)
+
+        self.action_NavigationToolbar = self.contextMenu.addAction(u'隐藏导航条')
+        self.action_Navigation = self.contextMenu.addAction(u'Navigation')
+        self.action_Back = self.contextMenu.addAction(u'Back')
+        self.action_Forward = self.contextMenu.addAction(u'Forward')
+
+        self.action_NavigationToolbar.triggered.connect(self.NavigationToolbarHandler)
+        self.action_Navigation.triggered.connect(self.parent.backnavigationPage)
+        self.action_Back.triggered.connect(self.parent.backPage)
+        self.action_Forward.triggered.connect(self.parent.forwardnextPage)
+
+    def showContextMenu(self, pos):
+        '''
+        右键点击时调用的函数
+        '''
+        # 菜单显示前，将它移动到鼠标点击的位置
+        coursePoint = QtGui.QCursor.pos()  # 获取当前光标的位置
+        self.contextMenu.move(coursePoint)
+        self.contextMenu.show()
+
+    def NavigationToolbarHandler(self):
+        '''
+        导航工具条显示与隐藏
+        '''
+        if self.navigation.isVisible():
+            self.action_NavigationToolbar.setText(u'显示导航')
+            self.navigation.setVisible(False)
+        else:
+            self.action_NavigationToolbar.setText(u'隐藏导航')
+            self.navigation.setVisible(True)
+
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            if self.navigation.rect().contains(event.pos()):
+                self.navigation.setVisible(True)
+            else:
+                self.navigation.setVisible(False)
+
+            if self.navigation.isVisible():
+                self.action_NavigationToolbar.setText(u'隐藏导航')
+            else:
+                self.action_NavigationToolbar.setText(u'显示导航')
 
 
-class childPage(QtGui.QWidget):
+class childPage(ContextMenu):
     """docstring for childPage"""
     def __init__(self, parent=None, child=None):
         super(childPage, self).__init__(parent)
@@ -82,9 +143,16 @@ class childPage(QtGui.QWidget):
         self.navigation.setMaximumHeight(60)
 
         QtCore.QObject.connect(getattr(self, 'Navigation' + 'Button'), QtCore.SIGNAL('clicked()'), self.parent, QtCore.SLOT('backnavigationPage()'))
-        QtCore.QObject.connect(getattr(self, 'Back' + 'Button'), QtCore.SIGNAL('clicked()'), self.parent, QtCore.SLOT('BackPage()'))
-        QtCore.QObject.connect(getattr(self, 'Forward' + 'Button'), QtCore.SIGNAL('clicked()'), self.parent, QtCore.SLOT('ForwardnextPage()'))
+        QtCore.QObject.connect(getattr(self, 'Back' + 'Button'), QtCore.SIGNAL('clicked()'), self.parent, QtCore.SLOT('backPage()'))
+        QtCore.QObject.connect(getattr(self, 'Forward' + 'Button'), QtCore.SIGNAL('clicked()'), self.parent, QtCore.SLOT('forwardnextPage()'))
         set_skin(self, os.sep.join(['skin', 'qss', 'ToolBarMetro.qss']))
+
+    # def mousePressEvent(self, event):
+    #     child = self.childAt(event.pos())
+    #     if isinstance(child, QtGui.QPushButton):
+    #         pass
+    #     else:
+    #         return
 
 
 class HomePage(QtGui.QWidget):
@@ -349,6 +417,47 @@ class NavigationPage(QtGui.QWidget):
     def __init__(self, parent=None):
         super(NavigationPage, self).__init__(parent)
         self.parent = parent
+        self.createContextMenu()
+
+    def createContextMenu(self):
+        '''
+        创建右键菜单
+        '''
+        # 必须将ContextMenuPolicy设置为Qt.CustomContextMenu
+        # 否则无法使用customContextMenuRequested信号
+        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.showContextMenu)
+
+        # 创建QMenu
+        self.contextMenu = QtGui.QMenu()
+        style_QMenu1 = "QMenu {background-color: #ABABAB; border: 1px solid black;}"
+        style_QMenu2 = "QMenu::item {background-color: transparent;}"
+        style_QMenu3 = "QMenu::item:selected { /* when user selects item using mouse or keyboard */background-color: #654321;}"
+        style_QMenu = QtCore.QString(style_QMenu1 + style_QMenu2 + style_QMenu3)
+        self.contextMenu.setStyleSheet(style_QMenu)
+
+        self.action_pointnum = self.contextMenu.addAction(u'设置数据显示点数')
+        self.action_pause = self.contextMenu.addAction(u'暂停')
+        self.action_NavigationToolbar = self.contextMenu.addAction(u'显示绘图导航')
+        # self.action_addaxes = self.contextMenu.addAction(u'增加子图')
+        self.action_delete = self.contextMenu.addAction(u'删除此图')
+        # 将动作与处理函数相关联
+        # 这里为了简单，将所有action与同一个处理函数相关联
+        # 当然也可以将他们分别与不同函数关联，实现不同的功能
+        # self.action_pointnum.triggered.connect(self.pointnumHandler)
+        # self.action_pause.triggered.connect(self.pauseHandler)
+        # self.action_NavigationToolbar.triggered.connect(self.NavigationToolbarHandler)
+        # # self.action_addaxes.triggered.connect(self.addaxesHandler)
+        # self.action_delete.triggered.connect(self.deleteHandler)
+
+    def showContextMenu(self, pos):
+        '''
+        右键点击时调用的函数
+        '''
+        # 菜单显示前，将它移动到鼠标点击的位置
+        coursePoint = QtGui.QCursor.pos()  # 获取当前光标的位置
+        self.contextMenu.move(coursePoint)
+        self.contextMenu.show()
 
 
 class MetroWindow(QtGui.QWidget):
@@ -410,7 +519,7 @@ class MetroWindow(QtGui.QWidget):
         self.pages.setCurrentWidget(self.navigationPage)
 
     @QtCore.pyqtSlot()
-    def BackPage(self):
+    def backPage(self):
         index = self.pages.currentIndex()
         if index == 0:
             self.pages.setCurrentWidget(self.navigationPage)
@@ -418,7 +527,7 @@ class MetroWindow(QtGui.QWidget):
             self.pages.setCurrentIndex(index - 1)
 
     @QtCore.pyqtSlot()
-    def ForwardnextPage(self):
+    def forwardnextPage(self):
         index = self.pages.currentIndex()
         if index < 9:
             self.pages.setCurrentIndex(index + 1)
@@ -449,6 +558,7 @@ class MainWindow(QtGui.QMainWindow):
         set_skin(self, os.sep.join(['skin', 'qss', 'dragondjf.qss']))  # 设置背景图
 
         self.fullscreenflag = True
+        self.navigation_flag = True
 
     def set_background(self, bg=None):
         set_bg(self, bg)
@@ -475,6 +585,19 @@ class MainWindow(QtGui.QMainWindow):
             else:
                 self.showNormal()
                 self.fullscreenflag = True
+        elif evt.key() == QtCore.Qt.Key_F10:
+            if hasattr(self.centralWidget().pages.currentWidget(), 'navigation'):
+                if self.navigation_flag:
+                    self.centralWidget().pages.currentWidget().navigation.setVisible(False)
+                    self.centralWidget().pages.currentWidget().action_NavigationToolbar.setText(u'显示导航')
+                    self.navigation_flag = False
+                else:
+                    self.centralWidget().pages.currentWidget().navigation.setVisible(True)
+                    self.centralWidget().pages.currentWidget().action_NavigationToolbar.setText(u'隐藏导航')
+                    self.navigation_flag = True
+        elif evt.key() == QtCore.Qt.Key_Return:
+            if isinstance(self.focusWidget(), QtGui.QPushButton):
+                self.focusWidget().click()
 
 
 def main():

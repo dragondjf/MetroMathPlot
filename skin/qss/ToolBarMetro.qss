@@ -4,7 +4,7 @@ QPushButton {
 }
 
 
-QPushButton:hover, QPushButton:pressed , QPushButton:checked
+QPushButton:hover, QPushButton:pressed , QPushButton:checked, QPushButton:focus
 {
 	background-color: rgb(85, 170, 255);
 	text-align: center;
