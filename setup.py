@@ -3,7 +3,8 @@
 
 from distutils.core import setup
 import py2exe
-
+import shutil
+import os
 
 from distutils.filelist import findall
 import os
@@ -29,7 +30,7 @@ data_files = matplotlib.get_py2exe_datafiles() + [
 # windows is a list of scripts that have their own UI and
 # thus don't need to run in a console.
 
-setup(windows=[{'script':'MathPlot.pyw','icon_resources':[(1,"images/DMathPlot.ico")]}],
+setup(windows=[{'script':'MetroMathPlot.py','icon_resources':[(1,"images/DMathPlot.ico")]}],
       options={
 
 # And now, configure py2exe by passing more options;
@@ -80,3 +81,7 @@ data_files=data_files
 # If you choose the bundle above, you may want to use this, too.
 #     zipfile=None,
 )
+
+shutil.copytree(os.getcwd() + os.sep + 'icons', os.getcwd() + os.sep + os.sep.join(['dist', 'icons']))
+shutil.copytree(os.getcwd() + os.sep + 'images', os.getcwd() + os.sep + os.sep.join(['dist', 'images']))
+shutil.copytree(os.getcwd() + os.sep + 'skin', os.getcwd() + os.sep + os.sep.join(['dist', 'skin']))
