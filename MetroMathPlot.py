@@ -147,13 +147,6 @@ class childPage(ContextMenu):
         QtCore.QObject.connect(getattr(self, 'Forward' + 'Button'), QtCore.SIGNAL('clicked()'), self.parent, QtCore.SLOT('forwardnextPage()'))
         set_skin(self, os.sep.join(['skin', 'qss', 'ToolBarMetro.qss']))
 
-    # def mousePressEvent(self, event):
-    #     child = self.childAt(event.pos())
-    #     if isinstance(child, QtGui.QPushButton):
-    #         pass
-    #     else:
-    #         return
-
 
 class HomePage(QtGui.QWidget):
     def __init__(self, parent=None):
