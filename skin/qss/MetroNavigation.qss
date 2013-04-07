@@ -1,7 +1,7 @@
 /* Metro Style*/
 QPushButton {
-   width: 200px; 
-   height: 200px;
+   /*width: 200px; */
+   height: 400px;
    background: green;
 }
 
@@ -9,7 +9,7 @@ QPushButton:hover, QPushButton:pressed , QPushButton:checked, QPushButton:focus
 {
 	background-color: rgb(85, 170, 255);
 	text-align: center;
-	padding-right: 20px;
+	/*padding-right: 20px;*/
 	font-weight:100
 }
 

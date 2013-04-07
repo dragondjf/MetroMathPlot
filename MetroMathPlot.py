@@ -19,13 +19,12 @@ from toolpage import ToolPage
 from productpage import ProductPage
 from helppage import HelpPage
 from aboutpage import AboutPage
-from guiutil import set_skin
+from guiutil import set_skin, set_bg
 
 
 class MetroWindow(QtGui.QWidget):
     def __init__(self, parent=None):
         super(MetroWindow, self).__init__(parent)
-        self.parent = parent
         self.initUI()
 
     def initUI(self):
@@ -50,13 +49,17 @@ class MetroWindow(QtGui.QWidget):
     def createMetroButton(self):
         self.navigationPage = NavigationPage()
         buttonLayout = QtGui.QGridLayout()
+        buttonLayout.setHorizontalSpacing(10)   # 设置和横向间隔像素
+        buttonLayout.setVerticalSpacing(10)    # 设置纵向间隔像素
         for buttons in self.MetroButtons:
             for item in buttons:
                 button = item + 'Button'
                 setattr(self, button, QtGui.QPushButton(item))
                 getattr(self, button).setObjectName(button)
                 buttonLayout.addWidget(getattr(self, button), self.MetroButtons.index(buttons), buttons.index(item))
-        set_skin(self, os.sep.join(['skin', 'qss', 'NavigationMetro.qss']))
+
+        self.buttonLayout = buttonLayout
+        set_skin(self, os.sep.join(['skin', 'qss', 'MetroNavigation.qss']))
 
         self.navigationPage.setLayout(buttonLayout)
 
@@ -110,9 +113,10 @@ class MetroWindow(QtGui.QWidget):
 class MainWindow(QtGui.QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
+
         self.centeralwindow = MetroWindow(self)
         self.setCentralWidget(self.centeralwindow)
-        self.setWindowTitle("Config Dialog")
+
         self.setWindowIcon(QtGui.QIcon('images' + os.sep + 'DMathPlot.ico'))  # 设置程序图标
         self.setGeometry(300, 300, 800, 600)  # 初始化窗口位置和大小
         self.center()  # 将窗口固定在屏幕中间
@@ -160,6 +164,15 @@ class MainWindow(QtGui.QMainWindow):
                     self.centralWidget().pages.currentWidget().navigation.setVisible(True)
                     self.centralWidget().pages.currentWidget().action_NavigationToolbar.setText(u'隐藏导航')
                     self.navigation_flag = True
+        elif evt.key() == QtCore.Qt.Key_F9:
+            currentpage = self.centralWidget().pages.currentWidget().child
+            if hasattr(currentpage, 'navigation'):
+                if currentpage.navigation_flag:
+                    currentpage.navigation.setVisible(False)
+                    currentpage.navigation_flag = False
+                else:
+                    currentpage.navigation.setVisible(True)
+                    currentpage.navigation_flag = True
         elif evt.key() == QtCore.Qt.Key_Return:
             if isinstance(self.focusWidget(), QtGui.QPushButton):
                 self.focusWidget().click()

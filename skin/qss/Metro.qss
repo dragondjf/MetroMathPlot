@@ -10,7 +10,7 @@ QPushButton:hover, QPushButton:pressed , QPushButton:checked
 {
 	background-color: rgb(85, 170, 255);
 	text-align: center;
-	padding-right: 20px;
+	/*padding-right: 20px;*/
 	font-weight:100
 }
 QPushButton#homeButton

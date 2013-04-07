@@ -3,6 +3,7 @@
 import os
 from PyQt4 import QtGui
 from PyQt4 import QtCore
+from childpage import ChildPage
 from guiutil import set_skin
 
 
@@ -55,7 +56,8 @@ class ToolPage(QtGui.QWidget):
         self.colordialog = QtGui.QColorDialog()
         bgcolor = self.colordialog.getColor()
         style = 'QPushButton {background : rgb(%s,%s,%s);}' % (bgcolor.red(), bgcolor.green(), bgcolor.blue())
-        set_skin(self.parent, os.sep.join(['skin', 'qss', 'NavigationMetro.qss']), style)
+        set_skin(self.parent, os.sep.join(['skin', 'qss', 'MetroNavigation.qss']), style)
+        set_skin(self, os.sep.join(['skin', 'qss', 'MetroNavigation.qss']), style)
 
     def set_ButtonImage(self):
         self.openFilesPath = QtCore.QString(os.getcwd() + os.sep + 'images')
@@ -63,15 +65,15 @@ class ToolPage(QtGui.QWidget):
             "Choose a picture", self.openFilesPath,
             "All Files (*);; Images (*.png *.bmp *.jpg)")
         style = 'QPushButton {border-image : url(%s);}' % str(QtCore.QDir(QtCore.QDir.currentPath()).relativeFilePath(filename))
-        set_skin(self.parent, os.sep.join(['skin', 'qss', 'NavigationMetro.qss']), style)
+        set_skin(self.parent, os.sep.join(['skin', 'qss', 'MetroNavigation.qss']), style)
 
     def set_ToolButtonColor(self):
         self.colordialog = QtGui.QColorDialog()
         bgcolor = self.colordialog.getColor()
         style = 'QPushButton {background : rgb(%s,%s,%s);}' % (bgcolor.red(), bgcolor.green(), bgcolor.blue())
         for item in self.parent.pages.children():
-            if isinstance(item, childPage):
-                set_skin(item, os.sep.join(['skin', 'qss', 'ToolBarMetro.qss']), style)
+            if isinstance(item, ChildPage):
+                set_skin(item, os.sep.join(['skin', 'qss', 'MetroToolBar.qss']), style)
 
     def set_ToolButtonImage(self):
         self.openFilesPath = QtCore.QString(os.getcwd() + os.sep + 'images')
@@ -80,5 +82,5 @@ class ToolPage(QtGui.QWidget):
             "All Files (*);; Images (*.png *.bmp *.jpg)")
         style = 'QPushButton {border-image : url(%s);}' % str(QtCore.QDir(QtCore.QDir.currentPath()).relativeFilePath(filename))
         for item in self.parent.pages.children():
-            if isinstance(item, childPage):
-                set_skin(item, os.sep.join(['skin', 'qss', 'ToolBarMetro.qss']), style)
+            if isinstance(item, ChildPage):
+                set_skin(item, os.sep.join(['skin', 'qss', 'MetroToolBar.qss']), style)

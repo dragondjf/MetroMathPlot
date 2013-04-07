@@ -103,4 +103,4 @@ class ChildPage(ContextMenu):
         QtCore.QObject.connect(getattr(self, 'Navigation' + 'Button'), QtCore.SIGNAL('clicked()'), self.parent, QtCore.SLOT('backnavigationPage()'))
         QtCore.QObject.connect(getattr(self, 'Back' + 'Button'), QtCore.SIGNAL('clicked()'), self.parent, QtCore.SLOT('backPage()'))
         QtCore.QObject.connect(getattr(self, 'Forward' + 'Button'), QtCore.SIGNAL('clicked()'), self.parent, QtCore.SLOT('forwardnextPage()'))
-        set_skin(self, os.sep.join(['skin', 'qss', 'ToolBarMetro.qss']))
+        set_skin(self, os.sep.join(['skin', 'qss', 'MetroToolBar.qss']))

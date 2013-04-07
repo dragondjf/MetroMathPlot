@@ -1,6 +1,7 @@
-/* Metro Style*/
+p/* Metro Style*/
 QPushButton {
     background: green;
+    border: none;
 }
 
 
@@ -8,7 +9,7 @@ QPushButton:hover, QPushButton:pressed , QPushButton:checked, QPushButton:focus
 {
 	background-color: rgb(85, 170, 255);
 	text-align: center;
-	padding-right: 20px;
+	/*padding-right: 20px;*/
 	font-weight:100
 }
 
@@ -18,6 +19,7 @@ QPushButton:hover
 	background-repeat:no-repeat;
 	background-position: center left;
 }
+
 QPushButton:pressed, QPushButton:checked
 {
 	/*background-image: url(skin/icons/light/appbar.arrow.left.png);*/
@@ -36,21 +38,21 @@ QPushButton#StartButton:hover, QPushButton#StartButton:pressed , QPushButton#Sta
 {
 	background-color: rgb(85, 170, 255);
 	text-align: center;
-	padding-right: 20px;
+	/*padding-right: 20px;*/
 	font-weight:100
 }
 
 QPushButton#StartButton:hover
 {
-	background-image: url(skin/icons/dark/appbar.arrow.left.png);
+	background-image: url(skin/icons/dark/appbar.cabinet.in.png);
 	background-repeat:no-repeat;
-	background-position: center left;
+	background-position: center top;
 }
 QPushButton#StartButton:pressed, QPushButton#StartButton:checked
 {
-	background-image: url(skin/icons/light/appbar.arrow.left.png);
+	background-image: url(skin/icons/light/appbar.cabinet.in.png);
 	background-repeat:no-repeat;
-	background-position: center right;
+	background-position: center bottom;
 }
 
 
@@ -64,52 +66,47 @@ QPushButton#PauseButton:hover, QPushButton#PauseButton:pressed , QPushButton#Pau
 {
 	background-color: rgb(85, 170, 255);
 	text-align: center;
-	padding-right: 20px;
+	/*padding-right: 20px;*/
 	font-weight:100
 }
 
 QPushButton#PauseButton:hover
 {
-	background-image: url(skin/icons/dark/appbar.arrow.left.png);
+	background-image: url(skin/icons/dark/appbar.control.pause.png);
 	background-repeat:no-repeat;
-	background-position: center left;
+	background-position: center top;
 }
 QPushButton#PauseButton:pressed, QPushButton#PauseButton:checked
 {
-	background-image: url(skin/icons/light/appbar.arrow.left.png);
+	background-image: url(skin/icons/light/appbar.control.pause.png);
 	background-repeat:no-repeat;
-	background-position: center right;
+	background-position: center bottom;
 }
 
 
-QPushButton#ChooseButton {
+QPushButton#CustomButton {
    width: 80px; 
    /*height: 80px;*/
    /*background: green;*/
 }
 
-QPushButton#ChooseButton:hover, QPushButton#ChooseButton:pressed , QPushButton#ChooseButton:checked
+QPushButton#CustomButton:hover, QPushButton#CustomButton:pressed , QPushButton#CustomButton:checked
 {
 	background-color: rgb(85, 170, 255);
 	text-align: center;
-	padding-right: 20px;
+	/*padding-right: 20px;*/
 	font-weight:100
 }
-/*QPushButton#ChooseButton
+
+QPushButton#CustomButton:hover
 {
-	background-image: url(skin/icons/dark/appbar.arrow.right.png);
+	background-image: url(skin/icons/dark/appbar.cell.function.png);
 	background-repeat:no-repeat;
 	background-position: center top;
-}*/
-QPushButton#ChooseButton:hover
-{
-	background-image: url(skin/icons/dark/appbar.arrow.right.png);
-	background-repeat:no-repeat;
-	background-position: center right;
 }
-QPushButton#ChooseButton:pressed, QPushButton#ChooseButton:checked
+QPushButton#CustomButton:pressed, QPushButton#ChooseButton:checked
 {
-	background-image: url(skin/icons/light/appbar.arrow.right.png);
+	background-image: url(skin/icons/light/appbar.cell.function.png);
 	background-repeat:no-repeat;
-	background-position: center left;
+	background-position: center bottom;
 }

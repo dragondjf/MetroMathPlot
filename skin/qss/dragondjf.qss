@@ -13,7 +13,7 @@ QPushButton
 	color: rgb(255, 255, 255);
 	background-color: rgb(167, 205, 255);
 	border:none;
-    padding: 3px;
+    /*padding: 3px;*/
 	font-family: "Verdana";
 	font-size: 15px;
 	text-align: center;

@@ -31,14 +31,21 @@ class DataShowPage(QtGui.QWidget):
         self.mainLayout.addWidget(self.splitter)
         self.setLayout(self.mainLayout)
 
+        self.navigation_flag = True   # 导航标志，初始化时显示导航
+
     def createToolBar(self):
-        navbutton = ['Start', 'Pause', 'Choose']
+        navbutton = ['Start', 'Pause', 'Custom']
+        self.buttontext = {
+            'Start': u'开始',
+            'Pause': u'暂停',
+            'Custom': u'自定义'
+        }
         self.navigation = QtGui.QWidget()
         navigationLayout = QtGui.QVBoxLayout()
 
         for item in navbutton:
             button = item + 'Button'
-            setattr(self, button, QtGui.QPushButton(item))
+            setattr(self, button, QtGui.QPushButton(self.buttontext[item]))
             getattr(self, button).setObjectName(button)
             navigationLayout.addWidget(getattr(self, button))
         self.navigation.setLayout(navigationLayout)
