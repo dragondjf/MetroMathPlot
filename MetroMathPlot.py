@@ -121,13 +121,13 @@ class childPage(ContextMenu):
         super(childPage, self).__init__(parent)
         self.parent = parent
         self.child = child
-
         self.createNavigation()
 
         mainLayout = QtGui.QVBoxLayout()
         mainLayout.addWidget(self.navigation)
         mainLayout.addWidget(self.child)
         self.setLayout(mainLayout)
+        self.layout().setContentsMargins(0, 0, 0, 0)
 
     def createNavigation(self):
         navbutton = ['Navigation', 'Back', 'Forward']
@@ -141,6 +141,7 @@ class childPage(ContextMenu):
             navigationLayout.addWidget(getattr(self, button))
         self.navigation.setLayout(navigationLayout)
         self.navigation.setMaximumHeight(60)
+        self.navigation.setContentsMargins(0, 0, 0, 0)
 
         QtCore.QObject.connect(getattr(self, 'Navigation' + 'Button'), QtCore.SIGNAL('clicked()'), self.parent, QtCore.SLOT('backnavigationPage()'))
         QtCore.QObject.connect(getattr(self, 'Back' + 'Button'), QtCore.SIGNAL('clicked()'), self.parent, QtCore.SLOT('backPage()'))
@@ -282,13 +283,14 @@ class DataShowPage(QtGui.QWidget):
         self.splitter.setOrientation(QtCore.Qt.Horizontal)  # 设置分割窗口水平排列
         self.splitter.setOpaqueResize(True)  # 设定分割窗的分割条在拖动时是否为实时更新显示，默认True表示实时更新
 
-        self.control = QtGui.QWidget()
+        self.createToolBar()
+
         self.splitter_figure = QtGui.QSplitter()
         self.splitter_figure.setOrientation(QtCore.Qt.Vertical)
         self.f1 = FigureWidget('Figure 1')
         self.splitter_figure.addWidget(self.f1)
 
-        self.splitter.addWidget(self.control)
+        self.splitter.addWidget(self.navigation)
         self.splitter.addWidget(self.splitter_figure)
         self.splitter.setSizes([self.width() / 4, self.width() * 3 / 4])  # 设置初始化时各个分割窗口的大小
         self.splitter.setStretchFactor(1, 1)  # 设置编号为1的控件为可伸缩控件，第二个参数为表示自适应调整，大于0表示只有为编号为1的控件会自适应调整
@@ -296,6 +298,19 @@ class DataShowPage(QtGui.QWidget):
         self.mainLayout = QtGui.QHBoxLayout()
         self.mainLayout.addWidget(self.splitter)
         self.setLayout(self.mainLayout)
+
+    def createToolBar(self):
+        navbutton = ['Start', 'Pause', 'Choose']
+        self.navigation = QtGui.QWidget()
+        navigationLayout = QtGui.QVBoxLayout()
+
+        for item in navbutton:
+            button = item + 'Button'
+            setattr(self, button, QtGui.QPushButton(item))
+            getattr(self, button).setObjectName(button)
+            navigationLayout.addWidget(getattr(self, button))
+        self.navigation.setLayout(navigationLayout)
+        set_skin(self.navigation, os.sep.join(['skin', 'qss', 'MetroDataShow.qss']))
 
 
 class FormPage(QtGui.QWidget):
@@ -456,6 +471,7 @@ class NavigationPage(QtGui.QWidget):
 class MetroWindow(QtGui.QWidget):
     def __init__(self, parent=None):
         super(MetroWindow, self).__init__(parent)
+        self.parent = parent
         self.initUI()
 
     def initUI(self):
@@ -463,6 +479,7 @@ class MetroWindow(QtGui.QWidget):
         self.createMetroButton()
 
         self.pages = QtGui.QStackedWidget()
+
         self.pages.addWidget(self.navigationPage)
 
         self.createChildPages()
@@ -474,6 +491,7 @@ class MetroWindow(QtGui.QWidget):
 
         self.faderWidget = None
         self.connect(self.pages, QtCore.SIGNAL("currentChanged(int)"), self.fadeInWidget)  # 页面切换时淡入淡出效果
+        self.layout().setContentsMargins(0, 0, 0, 0)
 
     def createMetroButton(self):
         self.navigationPage = NavigationPage()
@@ -538,8 +556,7 @@ class MetroWindow(QtGui.QWidget):
 class MainWindow(QtGui.QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
-
-        self.centeralwindow = MetroWindow()
+        self.centeralwindow = MetroWindow(self)
         self.setCentralWidget(self.centeralwindow)
         self.setWindowTitle("Config Dialog")
         self.setWindowIcon(QtGui.QIcon('images' + os.sep + 'DMathPlot.ico'))  # 设置程序图标
@@ -550,8 +567,9 @@ class MainWindow(QtGui.QMainWindow):
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         set_skin(self, os.sep.join(['skin', 'qss', 'dragondjf.qss']))  # 设置背景图
 
-        self.fullscreenflag = True
-        self.navigation_flag = True
+        self.fullscreenflag = False  # 初始化时非窗口最大话标志
+        self.navigation_flag = True   # 导航标志，初始化时显示导航
+        self.layout().setContentsMargins(0, 0, 0, 0)
 
     def set_background(self, bg=None):
         set_bg(self, bg)
@@ -572,12 +590,12 @@ class MainWindow(QtGui.QMainWindow):
             else:
                 return
         elif evt.key() == QtCore.Qt.Key_F11:
-            if self.fullscreenflag:
+            if not self.fullscreenflag:
                 self.showFullScreen()
-                self.fullscreenflag = False
+                self.fullscreenflag = True
             else:
                 self.showNormal()
-                self.fullscreenflag = True
+                self.fullscreenflag = False
         elif evt.key() == QtCore.Qt.Key_F10:
             if hasattr(self.centralWidget().pages.currentWidget(), 'navigation'):
                 if self.navigation_flag:
