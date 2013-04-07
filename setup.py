@@ -25,12 +25,13 @@ data_files = matplotlib.get_py2exe_datafiles() + [
             'c:\Python27\lib\site-packages\PyQt4\plugins\imageformats\qgif4.dll',
             'c:\Python27\lib\site-packages\PyQt4\plugins\imageformats\qjpeg4.dll',
             'c:\Python27\lib\site-packages\PyQt4\plugins\imageformats\qsvg4.dll',
+            'c:\Python27\lib\site-packages\PyQt4\plugins\imageformats\qico4.dll',
             ])]
 # Now you need to pass arguments to setup
 # windows is a list of scripts that have their own UI and
 # thus don't need to run in a console.
 
-setup(windows=[{'script':'MetroMathPlot.py','icon_resources':[(1,"images/DMathPlot.ico")]}],
+setup(windows=[{'script':'MetroMathPlot.py', 'icon_resources':[(1, "images\DMathPlot.ico")]}],
       options={
 
 # And now, configure py2exe by passing more options;

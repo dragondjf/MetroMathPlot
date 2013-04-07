@@ -1,4 +1,4 @@
-p/* Metro Style*/
+/* Metro Style*/
 QPushButton {
     background: green;
     border: none;
@@ -29,9 +29,12 @@ QPushButton:pressed, QPushButton:checked
 
 
 QPushButton#StartButton {
-   width: 80px; 
-   /*height: 80px;*/
-   /*background: green;*/
+    width: 80px;
+    /*height: 80px;*/
+    /*background: green;*/
+   	background-image: url(skin/icons/dark/appbar.cabinet.in.png);
+	background-repeat:no-repeat;
+	background-position: center top;
 }
 
 QPushButton#StartButton:hover, QPushButton#StartButton:pressed , QPushButton#StartButton:checked
@@ -46,7 +49,7 @@ QPushButton#StartButton:hover
 {
 	background-image: url(skin/icons/dark/appbar.cabinet.in.png);
 	background-repeat:no-repeat;
-	background-position: center top;
+	background-position: center bottom;
 }
 QPushButton#StartButton:pressed, QPushButton#StartButton:checked
 {
@@ -57,9 +60,12 @@ QPushButton#StartButton:pressed, QPushButton#StartButton:checked
 
 
 QPushButton#PauseButton {
-   width: 80px; 
-   /*height: 80px;*/
-   /*background: green;*/
+	width: 80px;
+    /*height: 80px;*/
+    /*background: green;*/
+   	background-image: url(skin/icons/dark/appbar.control.pause.png);
+	background-repeat:no-repeat;
+	background-position: center top;
 }
 
 QPushButton#PauseButton:hover, QPushButton#PauseButton:pressed , QPushButton#PauseButton:checked
@@ -74,7 +80,7 @@ QPushButton#PauseButton:hover
 {
 	background-image: url(skin/icons/dark/appbar.control.pause.png);
 	background-repeat:no-repeat;
-	background-position: center top;
+	background-position: center bottom;
 }
 QPushButton#PauseButton:pressed, QPushButton#PauseButton:checked
 {
@@ -85,9 +91,12 @@ QPushButton#PauseButton:pressed, QPushButton#PauseButton:checked
 
 
 QPushButton#CustomButton {
-   width: 80px; 
-   /*height: 80px;*/
-   /*background: green;*/
+    width: 80px; 
+    /*height: 80px;*/
+    /*background: green;*/
+	background-image: url(skin/icons/dark/appbar.cell.function.png);
+	background-repeat:no-repeat;
+	background-position: center top;
 }
 
 QPushButton#CustomButton:hover, QPushButton#CustomButton:pressed , QPushButton#CustomButton:checked
@@ -102,7 +111,7 @@ QPushButton#CustomButton:hover
 {
 	background-image: url(skin/icons/dark/appbar.cell.function.png);
 	background-repeat:no-repeat;
-	background-position: center top;
+	background-position: center bottom;
 }
 QPushButton#CustomButton:pressed, QPushButton#ChooseButton:checked
 {
