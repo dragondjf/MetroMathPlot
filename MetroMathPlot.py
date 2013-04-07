@@ -155,14 +155,15 @@ class MainWindow(QtGui.QMainWindow):
                 self.showNormal()
                 self.fullscreenflag = False
         elif evt.key() == QtCore.Qt.Key_F10:
-            if hasattr(self.centralWidget().pages.currentWidget(), 'navigation'):
+            currentpage = self.centralWidget().pages.currentWidget()
+            if hasattr(currentpage, 'navigation'):
                 if self.navigation_flag:
-                    self.centralWidget().pages.currentWidget().navigation.setVisible(False)
-                    self.centralWidget().pages.currentWidget().action_NavigationToolbar.setText(u'显示导航')
+                    currentpage.navigation.setVisible(False)
+                    currentpage.action_NavigationToolbar.setText(u'显示导航')
                     self.navigation_flag = False
                 else:
-                    self.centralWidget().pages.currentWidget().navigation.setVisible(True)
-                    self.centralWidget().pages.currentWidget().action_NavigationToolbar.setText(u'隐藏导航')
+                    currentpage.navigation.setVisible(True)
+                    currentpage.action_NavigationToolbar.setText(u'隐藏导航')
                     self.navigation_flag = True
         elif evt.key() == QtCore.Qt.Key_F9:
             currentpage = self.centralWidget().pages.currentWidget().child
