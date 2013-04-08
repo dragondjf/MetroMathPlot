@@ -46,6 +46,7 @@ class FigureWidget(QtGui.QWidget):
 
         self.fig.canvas.draw()
 
+        self.plotflag = False
         # 与右键有关的初始化设置
         self.point_num = point_num   # 默认显示点数
         self.pauseflag = False  # 默认不暂停
@@ -59,10 +60,11 @@ class FigureWidget(QtGui.QWidget):
 
     @QtCore.pyqtSlot(dict)
     def startwork(self, data):
-        self.ax.clear()
-        self.ax.plot(data['max'][-self.point_num:], color='r')
-        self.ax.plot(data['min'][-self.point_num:], color='b')
-        self.fig.canvas.draw()
+        if self.plotflag:
+            self.ax.clear()
+            self.ax.plot(data['max'][-self.point_num:], color='r')
+            self.ax.plot(data['min'][-self.point_num:], color='b')
+            self.fig.canvas.draw()
 
     def set_Xdata(self, x):
         self.x = x

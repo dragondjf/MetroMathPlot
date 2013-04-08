@@ -8,7 +8,8 @@ import configdialog
 from guiutil import set_skin
 import algorithm
 import util
-import random
+import threading
+import time
 
 
 class DataShowPage(QtGui.QWidget):
@@ -23,8 +24,8 @@ class DataShowPage(QtGui.QWidget):
 
         self.splitter_figure = QtGui.QSplitter()
         self.splitter_figure.setOrientation(QtCore.Qt.Vertical)
-        self.f1 = FigureWidget('Figure 1', point_num=100)
-        self.splitter_figure.addWidget(self.f1)
+        self.figurewidget = FigureWidget('Figure 1', point_num=100)
+        self.splitter_figure.addWidget(self.figurewidget)
 
         self.splitter.addWidget(self.navigation)
         self.splitter.addWidget(self.splitter_figure)
@@ -36,9 +37,6 @@ class DataShowPage(QtGui.QWidget):
         self.setLayout(self.mainLayout)
 
         self.navigation_flag = True   # 导航标志，初始化时显示导航
-        self.settingdialog = configdialog.ConfigDialog()
-        self.wavhandler = WavHandler(figurewidget=self.f1)
-        QtCore.QObject.connect(self.settingdialog, QtCore.SIGNAL('send(PyQt_PyObject)'), self.wavhandler, QtCore.SLOT('settings(PyQt_PyObject)'))
 
     def createToolBar(self):
         navbutton = ['Start', 'Pause', 'Custom']
@@ -58,56 +56,65 @@ class DataShowPage(QtGui.QWidget):
         self.navigation.setLayout(navigationLayout)
         set_skin(self.navigation, os.sep.join(['skin', 'qss', 'MetroDataShow.qss']))
 
-        getattr(self, 'StartButton').clicked.connect(self.settings)
+        getattr(self, 'StartButton').clicked.connect(self.startploting)
+        getattr(self, 'PauseButton').clicked.connect(self.stopploting)
 
-    def settings(self):
-        self.settingdialog.show()
+    def startploting(self):
+        self.figurewidget.plotflag = True
+
+    def stopploting(self):
+        self.figurewidget.plotflag = False
 
 
-class WavHandler(QtCore.QObject):
+class InteractiveManage(QtCore.QObject):
 
     started = QtCore.SIGNAL('send(PyQt_PyObject)')
 
-    def __init__(self, parent=None, figurewidget=None):
-        super(WavHandler, self).__init__(parent)
-        self.figurewidget = figurewidget
+    def __init__(self, parent=None, **pages):
+        super(InteractiveManage, self).__init__(parent)
+        self.parent = parent
+        for key, value in pages.items():
+            setattr(self, key, value)
+
+        self.settingdialog = configdialog.ConfigDialog()
         self.data = algorithm.creat_data(algorithm.Names)
-        QtCore.QObject.connect(self, self.started, self.figurewidget, QtCore.SLOT('startwork(PyQt_PyObject)'))
+
+        QtCore.QObject.connect(self, self.started, getattr(self, 'DataShowPage').figurewidget, QtCore.SLOT('startwork(PyQt_PyObject)'))
+        QtCore.QObject.connect(self.settingdialog, QtCore.SIGNAL('send(PyQt_PyObject)'), self, QtCore.SLOT('settings(PyQt_PyObject)'))
+
+        getattr(getattr(self, 'DataShowPage'), 'CustomButton').clicked.connect(self.setdialogshow)
+
+        self.importwavspreed = 0.2
+
+    def tcpServerstart(self):
+        t = threading.Thread(name="Listen Thread 1", target=self.handle)
+        t.setDaemon(True)
+        t.start()
+
+    def setdialogshow(self):
+        self.settingdialog.show()
 
     @QtCore.pyqtSlot(dict)
     def settings(self, kargs):
         self.wav_parameter = kargs
-        self.setup()
-
-    def setup(self):
         self.wavfiles = util.FilenameFilter(util.path_match_platform(self.wav_parameter['wavpath']))
-        # self.timer = self.startTimer(100)
-        # self.handle()
-        self.timer = self.startTimer(100)
 
     def handle(self):
-        # for wavfile in self.wavfiles:
-        #     x, fs, bits, N = util.wavread(unicode(wavfile))
-        #     self.x = (x + 32768) / 16
-        #     for i in range(1, len(x) / 1024):
-        #         for key in algorithm.Names:
-        #             self.data[key][:-1] = self.data[key][1:]
-        #         raw_data = self.x[1024 * (i - 1):1024 * i]
-        #         self.data['max'][-1] = max(raw_data)
-        #         self.data['min'][-1] = min(raw_data)
-        #         # self.emit(self.started, self.data)
-        #         # # self.timer = self.startTimer(100)
-        #         # time.sleep(1)
-        for key in algorithm.Names:
-            self.data[key][:-1] = self.data[key][1:]
-        a = [3000 * random.random(), 3000 * random.random()]
-        self.data['max'][-1] = max(a)
-        self.data['min'][-1] = min(a)
-
-    def finish(self):
-        pass
+        while True:
+            if hasattr(self, 'wavfiles'):
+                for wavfile in self.wavfiles:
+                    x, fs, bits, N = util.wavread(unicode(wavfile))
+                    self.x = (x + 32768) / 16
+                    for i in range(1, len(x) / 1024):
+                        for key in algorithm.Names:
+                            self.data[key][:-1] = self.data[key][1:]
+                        raw_data = self.x[1024 * (i - 1):1024 * i]
+                        self.data['max'][-1] = max(raw_data)
+                        self.data['min'][-1] = min(raw_data)
+                        self.emit(self.started, self.data)
+                        time.sleep(self.importwavspreed / self.wav_parameter['importwavspreed'])
+            else:
+                pass
 
     def timerEvent(self, evt):
-        self.handle()
-        self.emit(self.started, self.data)
-        # self.killTimer(self.timer)
+        pass

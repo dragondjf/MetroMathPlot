@@ -87,13 +87,17 @@ class ChildPage(ContextMenu):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
     def createNavigation(self):
-        navbutton = ['Navigation', 'Back', 'Forward']
+        navbutton = ['Navigation', 'Back', 'Forward', 'Min', 'Max', 'Close']
         self.navigation = QtGui.QWidget()
         navigationLayout = QtGui.QHBoxLayout()
 
         for item in navbutton:
             button = item + 'Button'
-            setattr(self, button, QtGui.QPushButton(item))
+            if item not in ['Min', 'Max', 'Close']:
+                setattr(self, button, QtGui.QPushButton(item))
+            else:
+                setattr(self, button, QtGui.QPushButton())
+
             getattr(self, button).setObjectName(button)
             navigationLayout.addWidget(getattr(self, button))
         self.navigation.setLayout(navigationLayout)
@@ -103,4 +107,9 @@ class ChildPage(ContextMenu):
         QtCore.QObject.connect(getattr(self, 'Navigation' + 'Button'), QtCore.SIGNAL('clicked()'), self.parent, QtCore.SLOT('backnavigationPage()'))
         QtCore.QObject.connect(getattr(self, 'Back' + 'Button'), QtCore.SIGNAL('clicked()'), self.parent, QtCore.SLOT('backPage()'))
         QtCore.QObject.connect(getattr(self, 'Forward' + 'Button'), QtCore.SIGNAL('clicked()'), self.parent, QtCore.SLOT('forwardnextPage()'))
+
+        QtCore.QObject.connect(getattr(self, 'Min' + 'Button'), QtCore.SIGNAL('clicked()'), self.parent.parent(), QtCore.SLOT('showMinimized()'))
+        QtCore.QObject.connect(getattr(self, 'Max' + 'Button'), QtCore.SIGNAL('clicked()'), self.parent.parent(), QtCore.SLOT('windowMaxNormal()'))
+        QtCore.QObject.connect(getattr(self, 'Close' + 'Button'), QtCore.SIGNAL('clicked()'), self.parent.parent(), QtCore.SLOT('close()'))
+
         set_skin(self, os.sep.join(['skin', 'qss', 'MetroToolBar.qss']))

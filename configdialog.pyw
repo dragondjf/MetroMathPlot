@@ -64,7 +64,7 @@ class ConfigurationPage(QtGui.QWidget):
         self.wavpathLabel = QtGui.QLabel(u"选择日志路径：")
         self.wavpathButton = QtGui.QPushButton(u'...')
         self.wavpathButton.clicked.connect(self.setExistingDirectory)
-        self.wavpathEdit = QtGui.QLineEdit(os.getcwd())
+        self.wavpathEdit = QtGui.QLineEdit(os.getcwd() + os.sep + 'wavs')
         self.wavpathHLayout = QtGui.QGridLayout()
         self.wavpathHLayout.addWidget(self.wavpathEdit, 0, 0)
         self.wavpathHLayout.addWidget(self.wavpathButton, 0, 1)
@@ -75,6 +75,13 @@ class ConfigurationPage(QtGui.QWidget):
         self.endTimeLabel = QtGui.QLabel(u"样本截止时间：")
         self.endTimeEdit = QtGui.QDateTimeEdit(QtCore.QDateTime.currentDateTime())
         self.endTimeEdit.setDisplayFormat("yyyy-MM-dd: hh-mm-ss")
+
+        self.importWavSpreedLabel = QtGui.QLabel(u"导入速度：")
+        self.importWavSpreedCombo = QtGui.QComboBox()
+        self.importWavSpreedCombo.addItem('1')
+        self.importWavSpreedCombo.addItem('2')
+        self.importWavSpreedCombo.addItem('3')
+        self.importWavSpreedCombo.addItem('4')
 
         self.SetPALayout = QtGui.QGridLayout()
         self.SetPALayout.addWidget(self.ipLabel, 0, 0)
@@ -87,6 +94,8 @@ class ConfigurationPage(QtGui.QWidget):
         self.SetPALayout.addWidget(self.startTimeEdit, 3, 1)
         self.SetPALayout.addWidget(self.endTimeLabel, 4, 0)
         self.SetPALayout.addWidget(self.endTimeEdit, 4, 1)
+        self.SetPALayout.addWidget(self.importWavSpreedLabel, 5, 0)
+        self.SetPALayout.addWidget(self.importWavSpreedCombo, 5, 1)
 
         self.configGroup.setLayout(self.SetPALayout)
 
@@ -243,6 +252,7 @@ class ConfigDialog(QtGui.QDialog):
         kargs['wavpath'] = unicode(self.configpage.wavpathEdit.text())
         kargs['starttime'] = self.configpage.startTimeEdit.dateTime().toTime_t()
         kargs['endtime'] = self.configpage.startTimeEdit.dateTime().toTime_t()
+        kargs['importwavspreed'] = int(unicode(self.configpage.importWavSpreedCombo.currentText()))
         self.emit(QtCore.SIGNAL('send(PyQt_PyObject)'), kargs)
         self.close()
 

@@ -3,8 +3,6 @@
 
 import sys
 import os
-import subprocess
-import util
 from PyQt4 import QtGui
 from PyQt4 import QtCore
 from effects import FaderWidget
@@ -12,7 +10,7 @@ from childpage import ChildPage
 from navigationpage import NavigationPage
 from homepage import HomePage
 from systempage import SystemPage
-from datashowpage import DataShowPage
+from datashowpage import DataShowPage, InteractiveManage
 from formpage import FormPage
 from viewpage import ViewPage
 from toolpage import ToolPage
@@ -23,6 +21,9 @@ from guiutil import set_skin, set_bg
 
 
 class MetroWindow(QtGui.QWidget):
+
+    funcpages = {}
+
     def __init__(self, parent=None):
         super(MetroWindow, self).__init__(parent)
         self.initUI()
@@ -70,6 +71,7 @@ class MetroWindow(QtGui.QWidget):
                 childpage = 'child' + page
                 setattr(self, page, getattr(sys.modules[__name__], page)(self))
                 setattr(self, childpage, ChildPage(self, getattr(self, page)))
+                self.funcpages[page] = getattr(self, page)
                 self.pages.addWidget(getattr(self, childpage))
 
     def createConnections(self):
@@ -129,6 +131,11 @@ class MainWindow(QtGui.QMainWindow):
         self.navigation_flag = True   # 导航标志，初始化时显示导航
         self.layout().setContentsMargins(0, 0, 0, 0)
 
+        # self.setWindowFlags(QtCore.Qt.CustomizeWindowHint)  # 隐藏标题栏， 可以拖动边框改变大小
+        # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)  # 隐藏标题栏， 无法改变大小
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowSystemMenuHint | QtCore.Qt.WindowMinimizeButtonHint)  # 无边框， 带系统菜单， 可以最小化
+        # self.setMouseTracking(True)
+
     def set_background(self, bg=None):
         set_bg(self, bg)
         self.setAutoFillBackground = True
@@ -139,6 +146,13 @@ class MainWindow(QtGui.QMainWindow):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
         # self.setGeometry(QtGui.QDesktopWidget().availableGeometry())
+
+    @QtCore.pyqtSlot()
+    def windowMaxNormal(self):
+        if self.isFullScreen():
+            self.showNormal()
+        else:
+            self.showFullScreen()
 
     def keyPressEvent(self, evt):
         if evt.key() == QtCore.Qt.Key_Escape:
@@ -183,6 +197,9 @@ def main():
     app = QtGui.QApplication(sys.argv)
     main = MainWindow()
     main.show()
+    intermanage = InteractiveManage(main, **main.centeralwindow.funcpages)
+    intermanage.tcpServerstart()
+
     sys.exit(app.exec_())
 
 if __name__ == '__main__':

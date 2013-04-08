@@ -27,7 +27,7 @@ QPushButton:pressed, QPushButton:checked
 
 
 QPushButton#NavigationButton {
-    width: 100px; 
+    width: 600px;
     height: 50px;
     /*background: green;*/
    	background-image: url(skin/icons/dark/appbar.city.sanfrancisco.png);
@@ -58,7 +58,7 @@ QPushButton#NavigationButton:pressed, QPushButton#NavigationButton:checked
 
 
 QPushButton#BackButton {
-    width: 100px;
+    width: 600px;
     height: 50px;
     /*background: green;*/
    	background-image: url(skin/icons/dark/appbar.navigate.previous.png);
@@ -89,7 +89,7 @@ QPushButton#BackButton:pressed, QPushButton#BackButton:checked
 
 
 QPushButton#ForwardButton {
-    width: 100px;
+    width: 600px;
     height: 50px;
     /*background: green;*/
    	background-image: url(skin/icons/dark/appbar.navigate.next.png);
@@ -116,4 +116,95 @@ QPushButton#ForwardButton:pressed, QPushButton#ForwardButton:checked
 	background-image: url(skin/icons/light/appbar.navigate.next.png);
 	background-repeat:no-repeat;
 	background-position: center left;
+}
+
+QPushButton#MinButton{
+    width: 50px;
+    height: 50px;
+    /*background: green;*/
+   	background-image: url(skin/icons/dark/appbar.minus.png);
+	background-repeat:no-repeat;
+	background-position: center;
+}
+
+QPushButton#MinButton:hover, QPushButton#MinButton:pressed , QPushButton#MinButton:checked
+{
+	background-color: rgb(85, 170, 255);
+	text-align: center;
+	/*padding-right: 20px;*/
+	font-weight:100
+}
+
+QPushButton#MinButton:hover
+{
+	background-image: url(skin/icons/dark/appbar.minus.png);
+	background-repeat:no-repeat;
+	background-position: center;
+}
+QPushButton#MinButton:pressed, QPushButton#MinButton:checked
+{
+	background-image: url(skin/icons/light/appbar.minus.png);
+	background-repeat:no-repeat;
+	background-position: center;
+}
+
+
+QPushButton#MaxButton{
+    width: 50px;
+    height: 50px;
+    /*background: green;*/
+   	background-image: url(skin/icons/dark/appbar.app.png);
+	background-repeat:no-repeat;
+	background-position: center;
+}
+
+QPushButton#MaxButton:hover, QPushButton#MaxButton:pressed , QPushButton#MaxButton:checked
+{
+	background-color: rgb(85, 170, 255);
+	text-align: center;
+	/*padding-right: 20px;*/
+	font-weight:100
+}
+
+QPushButton#MaxButton:hover
+{
+	background-image: url(skin/icons/dark/appbar.app.png);
+	background-repeat:no-repeat;
+	background-position: center;
+}
+QPushButton#MaxButton:pressed, QPushButton#MaxButton:checked
+{
+	background-image: url(skin/icons/light/appbar.app.png);
+	background-repeat:no-repeat;
+	background-position: center;
+}
+
+QPushButton#CloseButton{
+    width: 50px;
+    height: 50px;
+    /*background: green;*/
+   	background-image: url(skin/icons/dark/appbar.close.png);
+	background-repeat:no-repeat;
+	background-position: center;
+}
+
+QPushButton#CloseButton:hover, QPushButton#CloseButton:pressed , QPushButton#CloseButton:checked
+{
+	background-color: rgb(85, 170, 255);
+	text-align: center;
+	/*padding-right: 20px;*/
+	font-weight:100
+}
+
+QPushButton#CloseButton:hover
+{
+	background-image: url(skin/icons/dark/appbar.close.png);
+	background-repeat:no-repeat;
+	background-position: center;
+}
+QPushButton#CloseButton:pressed, QPushButton#CloseButton:checked
+{
+	background-image: url(skin/icons/light/appbar.close.png);
+	background-repeat:no-repeat;
+	background-position: center;
 }
