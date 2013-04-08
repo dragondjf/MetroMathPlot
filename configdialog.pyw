@@ -43,6 +43,7 @@
 
 import os
 from PyQt4 import QtCore, QtGui
+from guiutil import set_skin
 
 
 class ConfigurationPage(QtGui.QWidget):
@@ -244,6 +245,8 @@ class ConfigDialog(QtGui.QDialog):
         self.setLayout(mainLayout)
 
         self.setWindowTitle("Config Dialog")
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowSystemMenuHint | QtCore.Qt.WindowMinimizeButtonHint)  # 无边框， 带系统菜单， 可以最小化
+        set_skin(self, os.sep.join(['skin', 'qss', 'MetroDialog.qss']))  # 设置背景图
 
     def save_settings(self):
         kargs = {}
