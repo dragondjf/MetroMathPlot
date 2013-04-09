@@ -197,6 +197,38 @@ class QueryPage(QtGui.QWidget):
         self.setLayout(mainLayout)
 
 
+class ChildDialog(QtGui.QDialog):
+    def __init__(self, parent=None, child=None):
+        super(ChildDialog, self).__init__(parent)
+        self.parent = parent
+        self.child = child
+        self.createNavigation()
+
+        mainLayout = QtGui.QVBoxLayout()
+        mainLayout.addWidget(self.child)
+        mainLayout.addWidget(self.navigation)
+        self.setLayout(mainLayout)
+        self.layout().setContentsMargins(0, 0, 0, 0)
+
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowSystemMenuHint | QtCore.Qt.WindowMinimizeButtonHint)  # 无边框， 带系统菜单， 可以最小化
+        set_skin(self, os.sep.join(['skin', 'qss', 'MetroDialog.qss']))  # 设置弹出框样式
+
+    def createNavigation(self):
+        buttons = ['Ok', 'Cancel']
+        self.navigation = QtGui.QWidget()
+        navigationLayout = QtGui.QHBoxLayout()
+        for item in buttons:
+            button = item + 'Button'
+            setattr(self, button, QtGui.QPushButton(item))
+            getattr(self, button).setObjectName(button)
+            navigationLayout.addWidget(getattr(self, button))
+        self.navigation.setLayout(navigationLayout)
+        self.navigation.setMaximumHeight(60)
+        self.navigation.setContentsMargins(0, 0, 0, 0)
+
+        getattr(self, 'Cancel' + 'Button').clicked.connect(self.close)
+
+
 class ConfigDialog(QtGui.QDialog):
     def __init__(self, parent=None):
         super(ConfigDialog, self).__init__(parent)
@@ -220,34 +252,15 @@ class ConfigDialog(QtGui.QDialog):
         self.createIcons()
         self.contentsWidget.setCurrentRow(0)
 
-        okButton = QtGui.QPushButton("Ok")
-        cancelButton = QtGui.QPushButton("Close")
-
-        cancelButton.clicked.connect(self.close)
-        okButton.clicked.connect(self.save_settings)
-
         horizontalLayout = QtGui.QHBoxLayout()
         horizontalLayout.addWidget(self.contentsWidget)
         horizontalLayout.addWidget(self.pagesWidget, 1)
 
-        buttonsLayout = QtGui.QHBoxLayout()
-
-        buttonsLayout.addStretch(1)
-        buttonsLayout.addWidget(okButton)
-        buttonsLayout.addWidget(cancelButton)
-
         mainLayout = QtGui.QVBoxLayout()
         mainLayout.addLayout(horizontalLayout)
-        mainLayout.addStretch(1)
-        mainLayout.addSpacing(12)
-        mainLayout.addLayout(buttonsLayout)
-
         self.setLayout(mainLayout)
 
-        self.setWindowTitle("Config Dialog")
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowSystemMenuHint | QtCore.Qt.WindowMinimizeButtonHint)  # 无边框， 带系统菜单， 可以最小化
-        set_skin(self, os.sep.join(['skin', 'qss', 'MetroDialog.qss']))  # 设置背景图
-
+    @QtCore.pyqtSlot()
     def save_settings(self):
         kargs = {}
         kargs['ip'] = unicode(self.configpage.ipEdit.text())
@@ -257,7 +270,7 @@ class ConfigDialog(QtGui.QDialog):
         kargs['endtime'] = self.configpage.startTimeEdit.dateTime().toTime_t()
         kargs['importwavspreed'] = int(unicode(self.configpage.importWavSpreedCombo.currentText()))
         self.emit(QtCore.SIGNAL('send(PyQt_PyObject)'), kargs)
-        self.close()
+        self.parent().close()
 
     def changePage(self, current, previous):
         if not current:

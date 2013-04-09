@@ -76,11 +76,14 @@ class InteractiveManage(QtCore.QObject):
         for key, value in pages.items():
             setattr(self, key, value)
 
-        self.settingdialog = configdialog.ConfigDialog()
+        configdlg = configdialog.ConfigDialog()
+        self.settingdialog = configdialog.ChildDialog(None, configdlg)
+        QtCore.QObject.connect(getattr(self.settingdialog, 'Ok' + 'Button'), QtCore.SIGNAL('clicked()'), configdlg, QtCore.SLOT('save_settings()'))
+
         self.data = algorithm.creat_data(algorithm.Names)
 
         QtCore.QObject.connect(self, self.started, getattr(self, 'DataShowPage').figurewidget, QtCore.SLOT('startwork(PyQt_PyObject)'))
-        QtCore.QObject.connect(self.settingdialog, QtCore.SIGNAL('send(PyQt_PyObject)'), self, QtCore.SLOT('settings(PyQt_PyObject)'))
+        QtCore.QObject.connect(self.settingdialog.child, QtCore.SIGNAL('send(PyQt_PyObject)'), self, QtCore.SLOT('settings(PyQt_PyObject)'))
 
         getattr(getattr(self, 'DataShowPage'), 'CustomButton').clicked.connect(self.setdialogshow)
 
