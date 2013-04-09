@@ -205,6 +205,7 @@ class QInputDialog(QtGui.QDialog):
         super(QInputDialog, self).__init__(parent)
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowSystemMenuHint | QtCore.Qt.WindowMinimizeButtonHint)  # 无边框， 带系统菜单， 可以最小化
         set_skin(self, os.sep.join(['skin', 'qss', 'MetroDialog.qss']))  # 设置弹出框样式
+        self.setWindowIcon(QtGui.QIcon('icons/Write.png'))
         self.setModal(True)
         self.createNavigation()
 
@@ -246,6 +247,7 @@ class QInputDialog(QtGui.QDialog):
         mainLayout.addWidget(self.navigation)
         self.setLayout(mainLayout)
         self.layout().setContentsMargins(0, 0, 0, 0)
+        mainLayout.addStretch(1)
 
         self.intValue = intValue
         self.value = self.intValue.value()
@@ -276,6 +278,7 @@ class QInputDialog(QtGui.QDialog):
         mainLayout.addWidget(self.navigation)
         self.setLayout(mainLayout)
         self.layout().setContentsMargins(0, 0, 0, 0)
+        mainLayout.addStretch(1)
 
         self.doubleValue = doubleValue
         self.exec_()
@@ -299,6 +302,7 @@ class QInputDialog(QtGui.QDialog):
         mainLayout.addWidget(self.navigation)
         self.setLayout(mainLayout)
         self.layout().setContentsMargins(0, 0, 0, 0)
+        mainLayout.addStretch(1)
 
         self.textValue = textValue
         self.exec_()
@@ -325,6 +329,7 @@ class QInputDialog(QtGui.QDialog):
         mainLayout.addWidget(self.navigation)
         self.setLayout(mainLayout)
         self.layout().setContentsMargins(0, 0, 0, 0)
+        mainLayout.addStretch(1)
 
         self.itemValue = itemValue
         self.exec_()
