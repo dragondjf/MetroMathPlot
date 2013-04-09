@@ -43,6 +43,7 @@
 
 import os
 from PyQt4 import QtCore, QtGui
+from effects import FaderWidget
 from guiutil import set_skin
 
 
@@ -211,7 +212,9 @@ class ChildDialog(QtGui.QDialog):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowSystemMenuHint | QtCore.Qt.WindowMinimizeButtonHint)  # 无边框， 带系统菜单， 可以最小化
+        self.setModal(True)
         set_skin(self, os.sep.join(['skin', 'qss', 'MetroDialog.qss']))  # 设置弹出框样式
+        self.setWindowIcon(QtGui.QIcon('skin/icons/light/appbar.cog.png'))
 
     def createNavigation(self):
         buttons = ['Ok', 'Cancel']
@@ -227,6 +230,13 @@ class ChildDialog(QtGui.QDialog):
         self.navigation.setContentsMargins(0, 0, 0, 0)
 
         getattr(self, 'Cancel' + 'Button').clicked.connect(self.close)
+
+    def fadeInWidget(self):
+        '''
+            页面切换时槽函数实现淡入淡出效果
+        '''
+        self.faderWidget = FaderWidget(self)
+        self.faderWidget.start()
 
 
 class ConfigDialog(QtGui.QDialog):

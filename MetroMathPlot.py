@@ -5,12 +5,13 @@ import sys
 import os
 from PyQt4 import QtGui
 from PyQt4 import QtCore
+from intermanager import InteractiveManager
 from effects import FaderWidget
 from childpage import ChildPage
 from navigationpage import NavigationPage
 from homepage import HomePage
 from systempage import SystemPage
-from datashowpage import DataShowPage, InteractiveManage
+from datashowpage import DataShowPage
 from formpage import FormPage
 from viewpage import ViewPage
 from toolpage import ToolPage
@@ -197,8 +198,8 @@ def main():
     app = QtGui.QApplication(sys.argv)
     main = MainWindow()
     main.show()
-    intermanage = InteractiveManage(main, **main.centeralwindow.funcpages)
-    intermanage.tcpServerstart()
+    interactivemanager = InteractiveManager(main, **main.centeralwindow.funcpages)
+    interactivemanager.tcpServerstart()
 
     sys.exit(app.exec_())
 

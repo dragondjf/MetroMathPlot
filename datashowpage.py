@@ -62,62 +62,6 @@ class DataShowPage(QtGui.QWidget):
     def startploting(self):
         self.figurewidget.plotflag = True
 
+    @QtCore.pyqtSlot()
     def stopploting(self):
         self.figurewidget.plotflag = False
-
-
-class InteractiveManage(QtCore.QObject):
-
-    started = QtCore.SIGNAL('send(PyQt_PyObject)')
-
-    def __init__(self, parent=None, **pages):
-        super(InteractiveManage, self).__init__(parent)
-        self.parent = parent
-        for key, value in pages.items():
-            setattr(self, key, value)
-
-        configdlg = configdialog.ConfigDialog()
-        self.settingdialog = configdialog.ChildDialog(None, configdlg)
-        QtCore.QObject.connect(getattr(self.settingdialog, 'Ok' + 'Button'), QtCore.SIGNAL('clicked()'), configdlg, QtCore.SLOT('save_settings()'))
-
-        self.data = algorithm.creat_data(algorithm.Names)
-
-        QtCore.QObject.connect(self, self.started, getattr(self, 'DataShowPage').figurewidget, QtCore.SLOT('startwork(PyQt_PyObject)'))
-        QtCore.QObject.connect(self.settingdialog.child, QtCore.SIGNAL('send(PyQt_PyObject)'), self, QtCore.SLOT('settings(PyQt_PyObject)'))
-
-        getattr(getattr(self, 'DataShowPage'), 'CustomButton').clicked.connect(self.setdialogshow)
-
-        self.importwavspreed = 0.2
-
-    def tcpServerstart(self):
-        t = threading.Thread(name="Listen Thread 1", target=self.handle)
-        t.setDaemon(True)
-        t.start()
-
-    def setdialogshow(self):
-        self.settingdialog.show()
-
-    @QtCore.pyqtSlot(dict)
-    def settings(self, kargs):
-        self.wav_parameter = kargs
-        self.wavfiles = util.FilenameFilter(util.path_match_platform(self.wav_parameter['wavpath']))
-
-    def handle(self):
-        while True:
-            if hasattr(self, 'wavfiles'):
-                for wavfile in self.wavfiles:
-                    x, fs, bits, N = util.wavread(unicode(wavfile))
-                    self.x = (x + 32768) / 16
-                    for i in range(1, len(x) / 1024):
-                        for key in algorithm.Names:
-                            self.data[key][:-1] = self.data[key][1:]
-                        raw_data = self.x[1024 * (i - 1):1024 * i]
-                        self.data['max'][-1] = max(raw_data)
-                        self.data['min'][-1] = min(raw_data)
-                        self.emit(self.started, self.data)
-                        time.sleep(self.importwavspreed / self.wav_parameter['importwavspreed'])
-            else:
-                pass
-
-    def timerEvent(self, evt):
-        pass
