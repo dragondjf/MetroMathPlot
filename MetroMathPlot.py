@@ -121,7 +121,7 @@ class MainWindow(QtGui.QMainWindow):
         self.setCentralWidget(self.centeralwindow)
 
         self.setWindowIcon(QtGui.QIcon('images' + os.sep + 'DMathPlot.ico'))  # 设置程序图标
-        self.setGeometry(300, 300, 800, 600)  # 初始化窗口位置和大小
+        self.setGeometry(300, 300, 1200, 800)  # 初始化窗口位置和大小
         self.center()  # 将窗口固定在屏幕中间
         self.setMinimumSize(800, 600)
         self.setWindowTitle('Math Plot')

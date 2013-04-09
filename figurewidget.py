@@ -1,12 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 from PyQt4 import QtGui
 from PyQt4 import QtCore
 
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
 from matplotlib.figure import Figure
+from configdialog import QInputDialog
 
 
 class FigureWidget(QtGui.QWidget):
@@ -116,10 +116,8 @@ class FigureWidget(QtGui.QWidget):
         '''
         设置数据显示点数
         '''
-        style_QDialog = "QDialog {background: #ABABAB;}"
-        self.input_dialog = QtGui.QInputDialog()
-        self.input_dialog.setStyleSheet(style_QDialog)
-        i, ok = self.input_dialog.getInteger(self, u"设置数据点数", "number:", self.point_num, 1, 4096, 300)
+        self.input_dialog = QInputDialog()
+        i, ok = self.input_dialog.getInteger(u"设置数据点数", "number:", self.point_num, 1, 4096, 300)
         if ok:
             self.point_num = i
         # print self.point_num
