@@ -1,4 +1,8 @@
-QDialog{
+QDialog#QInputDialog{
+	background: rgb(125, 125, 125);
+}
+
+QDialog#QMessageBox{
 	background: rgb(125, 125, 125);
 }
 
@@ -52,3 +56,37 @@ QPushButton#CancelButton:pressed, QPushButton#CancelButton:checked
 	background-position: center right;
 }
 
+
+
+QPushButton#InfoButton
+{
+	background-image: url(skin/icons/dark/appbar.information.png);
+	background-repeat:no-repeat;
+	background-position: center left;
+    width: 500px; 
+    height: 50px;
+}
+
+QPushButton#InfoButton:hover, QPushButton#InfoButton:pressed , QPushButton#InfoButton:checked
+{
+	background-color: rgb(85, 170, 255);
+
+}
+QPushButton#InfoButton:hover
+{
+	background-image: url(skin/icons/dark/appbar.information.png);
+	background-repeat:no-repeat;
+	background-position: center left;
+}
+QPushButton#InfoButton:pressed, QPushButton#InfoButton:checked
+{
+	background-image: url(skin/icons/light/appbar.information.png);
+	background-repeat:no-repeat;
+	background-position: center left;
+}
+
+QTextEdit{
+	height: 200px;
+    background: rgb(85, 170, 255);
+    selection-background-color: rgb(125, 125, 125);
+}

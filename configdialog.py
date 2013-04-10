@@ -199,10 +199,47 @@ class QueryPage(QtGui.QWidget):
         self.setLayout(mainLayout)
 
 
+class QMessageBox(QtGui.QDialog):
+
+    def __init__(self, parent=None):
+        super(QMessageBox, self).__init__(parent)
+        self.setObjectName('QMessageBox')
+        self.setGeometry(300, 300, 400, 200)
+        self.center()
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowSystemMenuHint | QtCore.Qt.WindowMinimizeButtonHint)  # 无边框， 带系统菜单， 可以最小化
+        set_skin(self, os.sep.join(['skin', 'qss', 'MetroDialog.qss']))  # 设置弹出框样式
+        self.setWindowIcon(QtGui.QIcon('icons/Write.png'))
+        self.setModal(True)
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QtGui.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
+    def information(self, info):
+        infoButton = QtGui.QPushButton('info')
+        infoButton.setObjectName('Info' + 'Button')
+        info = QtGui.QTextEdit(info)
+        info.setReadOnly(True)
+        mainLayout = QtGui.QVBoxLayout()
+        mainLayout.addWidget(infoButton)
+        mainLayout.addWidget(info)
+        # mainLayout.addStretch(4)
+        infoButton.clicked.connect(self.clickReturn)
+        self.setLayout(mainLayout)
+        self.layout().setContentsMargins(0, 0, 0, 0)
+        self.exec_()
+
+    def clickReturn(self):
+        self.close()
+
+
 class QInputDialog(QtGui.QDialog):
 
     def __init__(self, parent=None):
         super(QInputDialog, self).__init__(parent)
+        self.setObjectName('QInputDialog')
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowSystemMenuHint | QtCore.Qt.WindowMinimizeButtonHint)  # 无边框， 带系统菜单， 可以最小化
         set_skin(self, os.sep.join(['skin', 'qss', 'MetroDialog.qss']))  # 设置弹出框样式
         self.setWindowIcon(QtGui.QIcon('icons/Write.png'))
@@ -460,5 +497,6 @@ if __name__ == '__main__':
     # print a.getItem(u'请输入', u'显示点数：', ['5000', '6000'], True)
     # print a.getText(u'请输入', u'显示点数：', '5000')
     # print a.getInteger(u'请输入', u'显示点数：', 5000)
-    print a.getDouble(u'请输入', u'显示点数：', 10)
+    # print a.getDouble(u'请输入', u'显示点数：', 10)
+    QMessageBox().information(u'这是一个很好的button，\n\r支持文本换行\n' * 5)
     sys.exit(app.exec_())
