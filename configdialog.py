@@ -148,7 +148,7 @@ class UpdatePage(QtGui.QWidget):
         mainLayout = QtGui.QVBoxLayout()
         mainLayout.addWidget(updateGroup)
         mainLayout.addWidget(packageGroup)
-        mainLayout.addSpacing(12)
+        mainLayout.addSpacing(50)
         mainLayout.addWidget(startUpdateButton)
         mainLayout.addStretch(1)
 
@@ -246,6 +246,12 @@ class QInputDialog(QtGui.QDialog):
         self.setModal(True)
         self.createNavigation()
 
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QtGui.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
     def createNavigation(self):
         buttons = ['Ok', 'Cancel']
         self.navigation = QtGui.QWidget()
@@ -289,6 +295,8 @@ class QInputDialog(QtGui.QDialog):
         self.intValue = intValue
         self.value = self.intValue.value()
         self.flag = False
+
+        self.center()
         self.exec_()
         return self.intValue.value(), self.flag
 
@@ -437,8 +445,8 @@ class ConfigDialog(QtGui.QDialog):
         self.updatepage = UpdatePage()
         self.querypage = QueryPage()
 
-        self.pagesWidget.addWidget(self.configpage)
         self.pagesWidget.addWidget(self.updatepage)
+        self.pagesWidget.addWidget(self.configpage)
         self.pagesWidget.addWidget(self.querypage)
 
         self.createIcons()
@@ -470,21 +478,21 @@ class ConfigDialog(QtGui.QDialog):
         self.pagesWidget.setCurrentIndex(self.contentsWidget.row(current))
 
     def createIcons(self):
-        configButton = QtGui.QListWidgetItem(self.contentsWidget)
-        configButton.setIcon(QtGui.QIcon('icons/config.png'))
-        configButton.setText("Configuration")
-        configButton.setTextAlignment(QtCore.Qt.AlignHCenter)
-        configButton.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-
         updateButton = QtGui.QListWidgetItem(self.contentsWidget)
         updateButton.setIcon(QtGui.QIcon('icons/update.png'))
-        updateButton.setText("Update")
+        updateButton.setText(u"实时波形")
         updateButton.setTextAlignment(QtCore.Qt.AlignHCenter)
         updateButton.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
 
+        configButton = QtGui.QListWidgetItem(self.contentsWidget)
+        configButton.setIcon(QtGui.QIcon('icons/config.png'))
+        configButton.setText(u"日志回演")
+        configButton.setTextAlignment(QtCore.Qt.AlignHCenter)
+        configButton.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+
         queryButton = QtGui.QListWidgetItem(self.contentsWidget)
         queryButton.setIcon(QtGui.QIcon('icons/query.png'))
-        queryButton.setText("Query")
+        queryButton.setText(u"Query")
         queryButton.setTextAlignment(QtCore.Qt.AlignHCenter)
         queryButton.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
 
@@ -496,7 +504,7 @@ if __name__ == '__main__':
     a = QInputDialog()
     # print a.getItem(u'请输入', u'显示点数：', ['5000', '6000'], True)
     # print a.getText(u'请输入', u'显示点数：', '5000')
-    # print a.getInteger(u'请输入', u'显示点数：', 5000)
+    print a.getInteger(u'请输入', u'显示点数：', 5000)
     # print a.getDouble(u'请输入', u'显示点数：', 10)
-    QMessageBox().information(u'这是一个很好的button，\n\r支持文本换行\n' * 5)
+    # QMessageBox().information(u'这是一个很好的button，\n\r支持文本换行\n' * 5)
     sys.exit(app.exec_())
