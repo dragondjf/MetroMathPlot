@@ -24,8 +24,10 @@ class DataShowPage(QtGui.QWidget):
 
         self.splitter_figure = QtGui.QSplitter()
         self.splitter_figure.setOrientation(QtCore.Qt.Vertical)
-        self.figurewidget = FigureWidget('Figure 1', point_num=100)
-        self.splitter_figure.addWidget(self.figurewidget)
+        i = 0
+        setattr(self, 'figurewidget%d' % i ,FigureWidget('Figure%d' % i, point_num=100))
+
+        self.splitter_figure.addWidget(getattr(self, 'figurewidget%d' % i))
 
         self.splitter.addWidget(self.navigation)
         self.splitter.addWidget(self.splitter_figure)
@@ -39,11 +41,12 @@ class DataShowPage(QtGui.QWidget):
         self.navigation_flag = True   # 导航标志，初始化时显示导航
 
     def createToolBar(self):
-        navbutton = ['Start', 'Pause', 'Custom']
+        navbutton = ['Start', 'Pause', 'Custom', 'Add']
         self.buttontext = {
             'Start': u'开始',
             'Pause': u'暂停',
-            'Custom': u'自定义'
+            'Custom': u'自定义',
+            'Add': u'增加'
         }
         self.navigation = QtGui.QWidget()
         navigationLayout = QtGui.QVBoxLayout()
@@ -56,12 +59,19 @@ class DataShowPage(QtGui.QWidget):
         self.navigation.setLayout(navigationLayout)
         set_skin(self.navigation, os.sep.join(['skin', 'qss', 'MetroDataShow.qss']))
 
-        getattr(self, 'StartButton').clicked.connect(self.startploting)
-        getattr(self, 'PauseButton').clicked.connect(self.stopploting)
+        # getattr(self, 'StartButton').clicked.connect(self.startploting)
+        # getattr(self, 'PauseButton').clicked.connect(self.stopploting)
+        getattr(self, 'AddButton').clicked.connect(self.addFigure)
 
-    def startploting(self):
-        self.figurewidget.plotflag = True
+    # def startploting(self):
+    #     self.figurewidget.plotflag = True
 
-    @QtCore.pyqtSlot()
-    def stopploting(self):
-        self.figurewidget.plotflag = False
+    # @QtCore.pyqtSlot()
+    # def stopploting(self):
+    #     self.figurewidget.plotflag = False
+
+    def addFigure(self):
+        i = self.splitter_figure.count()
+        setattr(self, 'figurewidget%d' % i ,FigureWidget('Figure%d' % i, point_num=100))
+        self.splitter_figure.addWidget(getattr(self, 'figurewidget%d' % i))
+        self.emit(QtCore.SIGNAL('send(PyQt_PyObject)'), i)

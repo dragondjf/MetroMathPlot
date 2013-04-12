@@ -46,6 +46,7 @@ import sys
 from PyQt4 import QtCore, QtGui
 from effects import FaderWidget
 from guiutil import set_skin
+from algorithm import Names
 
 
 class ConfigurationPage(QtGui.QWidget):
@@ -114,45 +115,107 @@ class ConfigurationPage(QtGui.QWidget):
         self.wavpathEdit.setText(directory)
 
 
-class UpdatePage(QtGui.QWidget):
+class FsWidget(QtGui.QWidget):
     def __init__(self, parent=None):
-        super(UpdatePage, self).__init__(parent)
+        super(FsWidget, self).__init__(parent)
+        fsGroup = QtGui.QGroupBox(u"实时波形设置")
+        PALabel = QtGui.QLabel(u"选择防区：")
+        self.PACombo = QtGui.QComboBox()
+        self.initfromMongoDB()
 
-        updateGroup = QtGui.QGroupBox("Package selection")
-        systemCheckBox = QtGui.QCheckBox("Update system")
-        appsCheckBox = QtGui.QCheckBox("Update applications")
-        docsCheckBox = QtGui.QCheckBox("Update documentation")
+        featurevalueLabel = QtGui.QLabel(u'选择特征值：')
+        self.featurevalueWidget = self.creatFeatureValueWidget()
 
-        packageGroup = QtGui.QGroupBox("Existing packages")
+        pointnumberLabel = QtGui.QLabel(u'显示波形点数：')
+        pointnumberEdit =  QtGui.QSpinBox()
+        pointnumberEdit.setMaximum(4096)
+        pointnumberEdit.setValue(300)
+        pointnumberEdit.setMinimum(1)
+        self.pointnumberEdit = pointnumberEdit
 
-        packageList = QtGui.QListWidget()
-        qtItem = QtGui.QListWidgetItem(packageList)
-        qtItem.setText("Qt")
-        qsaItem = QtGui.QListWidgetItem(packageList)
-        qsaItem.setText("QSA")
-        teamBuilderItem = QtGui.QListWidgetItem(packageList)
-        teamBuilderItem.setText("Teambuilder")
-
-        startUpdateButton = QtGui.QPushButton("Start update")
-
-        updateLayout = QtGui.QVBoxLayout()
-        updateLayout.addWidget(systemCheckBox)
-        updateLayout.addWidget(appsCheckBox)
-        updateLayout.addWidget(docsCheckBox)
-        updateGroup.setLayout(updateLayout)
-
-        packageLayout = QtGui.QVBoxLayout()
-        packageLayout.addWidget(packageList)
-        packageGroup.setLayout(packageLayout)
+        fsLayout = QtGui.QGridLayout()
+        fsLayout.addWidget(PALabel, 0, 0)
+        fsLayout.addWidget(self.PACombo, 0, 1)
+        fsLayout.addWidget(featurevalueLabel, 1, 0)
+        fsLayout.addWidget(self.featurevalueWidget, 1, 1)
+        fsLayout.addWidget(pointnumberLabel, 2, 0)
+        fsLayout.addWidget(self.pointnumberEdit, 2, 1)
+        fsGroup.setLayout(fsLayout)
 
         mainLayout = QtGui.QVBoxLayout()
-        mainLayout.addWidget(updateGroup)
-        mainLayout.addWidget(packageGroup)
-        mainLayout.addSpacing(50)
-        mainLayout.addWidget(startUpdateButton)
+        mainLayout.addWidget(fsGroup)
+        mainLayout.addStretch(1)
+        self.setLayout(mainLayout)
+
+    def creatFeatureValueWidget(self):
+        featurevalueWidget = QtGui.QWidget()
+        fsGridLoyout = QtGui.QGridLayout()
+        Names = [
+            ['max', 'min', 'davg'] + ['f%d' % n for n in range(0, 8)] + ['time'], 
+            ['alarmflag', 'alarmrate'] + ['data%d' % n for n in range(0, 10)]
+        ]
+        for keys in Names:
+            for key in keys:
+                setattr(self, key + 'CheckBox', QtGui.QCheckBox(key))
+                getattr(self, key + 'CheckBox').setObjectName(key + 'CheckBox')
+                fsGridLoyout.addWidget(getattr(self, key + 'CheckBox'), Names.index(keys), keys.index(key))
+        featurevalueWidget.setLayout(fsGridLoyout)
+        return featurevalueWidget
+
+    def initfromMongoDB(self):
+        self.PAlist = {}
+        from mongokit import Connection
+        connection = Connection()
+        for docment in connection['gsd']['PA_Col'].find():
+            self.PACombo.addItem(docment['gno'])
+            self.PAlist[docment['gno']] = str(docment['_id'])
+
+
+class FsPage(QtGui.QWidget):
+    def __init__(self, parent=None):
+        super(FsPage, self).__init__(parent)
+
+        self.fswidget0 = FsWidget()
+
+        self.createNavigation()
+        getattr(self, 'AddButton').clicked.connect(self.addfswidget)
+        getattr(self, 'DeleteButton').clicked.connect(self.deletefswidget)
+
+        mainLayout = QtGui.QVBoxLayout()
+        mainLayout.addWidget(self.fswidget0)
+        mainLayout.addWidget(self.navigation)
         mainLayout.addStretch(1)
 
         self.setLayout(mainLayout)
+
+    def addfswidget(self):
+        index = self.layout().indexOf(self.navigation)
+        if index < 4:
+            setattr(self, 'fswidget' + str(index), FsWidget())
+            self.layout().insertWidget(index, getattr(self, 'fswidget' + str(index)))
+        else:
+            QMessageBox().information(u'实时波形最多容许4个!')
+
+    def deletefswidget(self):
+        index = self.layout().indexOf(self.navigation)
+        if index > 0:
+            getattr(self, 'fswidget' + str(index-1)).deleteLater()
+        else:
+            QMessageBox().information(u'实时波形设置必须至少有一个!')
+
+    def createNavigation(self):
+        buttons = ['Add', 'Delete']
+        self.buttontext = {'Add': u"增加", 'Delete': u"删除"}
+        self.navigation = QtGui.QWidget()
+        navigationLayout = QtGui.QHBoxLayout()
+        for item in buttons:
+            button = item + 'Button'
+            setattr(self, button, QtGui.QPushButton(self.buttontext[item]))
+            getattr(self, button).setObjectName(button)
+            navigationLayout.addWidget(getattr(self, button))
+        self.navigation.setLayout(navigationLayout)
+        self.navigation.setMaximumHeight(60)
+        self.navigation.setContentsMargins(0, 0, 0, 0)
 
 
 class QueryPage(QtGui.QWidget):
@@ -442,10 +505,10 @@ class ConfigDialog(QtGui.QDialog):
 
         self.pagesWidget = QtGui.QStackedWidget()
         self.configpage = ConfigurationPage()
-        self.updatepage = UpdatePage()
+        self.fspage = FsPage()
         self.querypage = QueryPage()
 
-        self.pagesWidget.addWidget(self.updatepage)
+        self.pagesWidget.addWidget(self.fspage)
         self.pagesWidget.addWidget(self.configpage)
         self.pagesWidget.addWidget(self.querypage)
 
@@ -462,13 +525,33 @@ class ConfigDialog(QtGui.QDialog):
 
     @QtCore.pyqtSlot()
     def save_settings(self):
+        currentwidget =  self.pagesWidget.currentWidget()
         kargs = {}
-        kargs['ip'] = unicode(self.configpage.ipEdit.text())
-        kargs['channel'] = unicode(self.configpage.channelCombo.currentText())
-        kargs['wavpath'] = unicode(self.configpage.wavpathEdit.text())
-        kargs['starttime'] = self.configpage.startTimeEdit.dateTime().toTime_t()
-        kargs['endtime'] = self.configpage.startTimeEdit.dateTime().toTime_t()
-        kargs['importwavspreed'] = int(unicode(self.configpage.importWavSpreedCombo.currentText()))
+        if currentwidget is self.fspage:
+            i = 0
+            for widget in self.fspage.children():
+                if isinstance(widget, FsWidget):
+                    cupa = {}
+                    cupa['_id'] = widget.PAlist[unicode(widget.PACombo.currentText())]
+                    cupa['featurevalue'] = {}
+                    for checkbox in widget.featurevalueWidget.children():
+                        if isinstance(checkbox, QtGui.QCheckBox):
+                            cupa['featurevalue'][unicode(checkbox.text())] =  checkbox.isChecked()
+                    cupa['featurevalue']['st'] =  widget.pointnumberEdit.value()
+                    cupa['featurevalue']['ed'] =  1
+                    cupa['gno'] = unicode(widget.PACombo.currentText())
+                    kargs[i] = cupa
+                    i += 1
+
+        elif currentwidget is self.configpage:
+            kargs['ip'] = unicode(self.configpage.ipEdit.text())
+            kargs['channel'] = unicode(self.configpage.channelCombo.currentText())
+            kargs['wavpath'] = unicode(self.configpage.wavpathEdit.text())
+            kargs['starttime'] = self.configpage.startTimeEdit.dateTime().toTime_t()
+            kargs['endtime'] = self.configpage.startTimeEdit.dateTime().toTime_t()
+            kargs['importwavspreed'] = int(unicode(self.configpage.importWavSpreedCombo.currentText()))
+        else:
+            pass
         self.emit(QtCore.SIGNAL('send(PyQt_PyObject)'), kargs)
         self.parent().close()
 

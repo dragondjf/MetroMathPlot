@@ -2,17 +2,20 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui
 from PyQt4 import QtCore
+from figurewidget import FigureWidget
 import configdialog
 import algorithm
 import util
 import threading
+import thread
 import time
 import websocket
+import json
 
 
 class InteractiveManager(QtCore.QObject):
 
-    started = QtCore.SIGNAL('send(PyQt_PyObject)')
+    started = QtCore.SIGNAL('send(PyQt_PyObject, PyQt_PyObject)')
 
     def __init__(self, parent=None, **pages):
         super(InteractiveManager, self).__init__(parent)
@@ -26,20 +29,30 @@ class InteractiveManager(QtCore.QObject):
         QtCore.QObject.connect(getattr(self.settingdialog, 'Ok' + 'Button'), QtCore.SIGNAL('clicked()'), configdlg, QtCore.SLOT('save_settings()'))  # 点击弹出窗口OkButton，执行保存参数函数
         QtCore.QObject.connect(self.settingdialog.child, QtCore.SIGNAL('send(PyQt_PyObject)'), self, QtCore.SLOT('settings(PyQt_PyObject)'))  # 交互管理窗口获取保存的配置
 
-        QtCore.QObject.connect(self.parent.centeralwindow.pages, QtCore.SIGNAL("currentChanged(int)"), getattr(self, 'DataShowPage'), QtCore.SLOT('stopploting()'))  # 页面切换时暂停波形绘制功能
+        # QtCore.QObject.connect(self.parent.centeralwindow.pages, QtCore.SIGNAL("currentChanged(int)"), getattr(self, 'DataShowPage'), QtCore.SLOT('stopploting()'))  # 页面切换时暂停波形绘制功能
 
-        QtCore.QObject.connect(self, self.started, getattr(self, 'DataShowPage').figurewidget, QtCore.SLOT('startwork(PyQt_PyObject)'))  # 向绘图控件传递需要绘制的数据
+        # QtCore.QObject.connect(self, self.started, getattr(self, 'DataShowPage').figurewidget, QtCore.SLOT('startwork(PyQt_PyObject, PyQt_PyObject)'))  # 向绘图控件传递需要绘制的数据
+        
+        QtCore.QObject.connect(getattr(self, 'DataShowPage'), QtCore.SIGNAL('send(PyQt_PyObject)'), self, QtCore.SLOT('interfigure(PyQt_PyObject)'))
+        # QtCore.QObject.connect(getattr(self, 'DataShowPage'), QtCore.SIGNAL('send(PyQt_PyObject)'), self, QtCore.SLOT('interfigure(PyQt_PyObject)'))
+
         getattr(getattr(self, 'DataShowPage'), 'Custom' + 'Button').clicked.connect(self.setdialogshow)  # 打开设置对话框
 
         self.importwavspreed = 0.2
         self.data = algorithm.creat_data(algorithm.Names)
 
-    def tcpServerstart(self):
-        # t = threading.Thread(name="Listen Thread 1", target=self.handle)
-        t = threading.Thread(name="Listen Thread 1", target=self.websocketHandle)
-        t.setDaemon(True)
-        t.start()
+    # def tcpServerstart(self):
+    #     # t = threading.Thread(name="Listen Thread 1", target=self.handle)
+    #     t = threading.Thread(name="Listen Thread 1", target=self.websocketHandle)
+    #     t.setDaemon(True)
+    #     t.start()
+    @QtCore.pyqtSlot(int)
+    def interfigure(self, i):
+        print i
+        f = getattr(getattr(self, 'DataShowPage'), 'figurewidget%d' % i)
+        QtCore.QObject.connect(f, QtCore.SIGNAL('send()'), self, QtCore.SLOT('setdialogshow()'))
 
+    @QtCore.pyqtSlot()
     def setdialogshow(self):
         self.settingdialog.show()
         self.settingdialog.setGeometry(self.parent.geometry())
@@ -47,8 +60,11 @@ class InteractiveManager(QtCore.QObject):
 
     @QtCore.pyqtSlot(dict)
     def settings(self, kargs):
-        self.wav_parameter = kargs
-        self.wavfiles = util.FilenameFilter(util.path_match_platform(self.wav_parameter['wavpath']))
+        self.settintparameter = kargs
+        if 'wavpath' in kargs:
+            self.wavfiles = util.FilenameFilter(util.path_match_platform(self.settintparameter['wavpath']))
+
+        self.websocketHandle()
 
     def handle(self):
         while True:
@@ -68,17 +84,24 @@ class InteractiveManager(QtCore.QObject):
                 pass
 
     def websocketHandle(self):
-        # enableTrace(True)
-        ws = websocket.create_connection("ws://localhost:9000/waves/5164dd0a5ce2c809f75773cb")
-        import json
-        true = True
-        false = False
-        ws.send(json.dumps({"max":true,"min":true,"davg":true,"alarmflag":false,"alarmrate":false,"data0":false,"f0":false,"data1":false,"f1":false,"data2":false,"f2":false,"data3":false,"f3":false,"data4":false,"f4":false,"data5":false,"f5":false,"data6":false,"f6":false,"data7":false,"f7":false,"data8":false,"data9":false,"st":300,"ed":1}))
+        for i in self.settintparameter:
+            t = threading.Thread(name="Wave Thread %d" % i, target=self.wavhandle, args=(self.settintparameter[i]['_id'],self.settintparameter[i]['featurevalue'] , ))
+            t.setDaemon(True)
+            t.start()
+
+    def wavhandle(self, _id, featurevalue):
+        ws = websocket.create_connection("ws://localhost:9000/waves/%s" % _id)
+        ws.send(json.dumps(featurevalue))
         while True:
+            showf = []
+            for key in featurevalue:
+                if type(featurevalue[key]) is bool and featurevalue[key]:
+                    showf.append(key)
+
             result = json.loads(ws.recv())
             for item in result:
                 for key in algorithm.Names:
                     self.data[key][:-1] = self.data[key][1:]
                 for key in item:
                     self.data[key][-1] = item[key]
-            self.emit(self.started, self.data)
+            self.emit(self.started, self.data, showf)

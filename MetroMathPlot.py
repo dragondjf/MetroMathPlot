@@ -199,7 +199,7 @@ def main():
     main = MainWindow()
     main.show()
     interactivemanager = InteractiveManager(main, **main.centeralwindow.funcpages)
-    interactivemanager.tcpServerstart()
+    # interactivemanager.tcpServerstart()
 
     sys.exit(app.exec_())
 

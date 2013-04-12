@@ -11,6 +11,9 @@ from configdialog import QInputDialog, QMessageBox
 
 class FigureWidget(QtGui.QWidget):
     """Matplotlib Figure widget to display CPU utilization"""
+
+    datafromSingle = QtCore.SIGNAL('send()')
+
     def __init__(self, title="Figrue", point_num=300, x=[], y=[]):
         # save the current CPU info (used by updating algorithm)R
         super(FigureWidget, self).__init__()
@@ -58,12 +61,18 @@ class FigureWidget(QtGui.QWidget):
         self.timer_interval = 100
         # self.startwork()
 
-    @QtCore.pyqtSlot(dict)
-    def startwork(self, data):
+    @QtCore.pyqtSlot(dict, list)
+    def startwork(self, data, showf):
         if self.plotflag:
             self.ax.clear()
-            self.ax.plot(data['max'][-self.point_num:], color='r')
-            self.ax.plot(data['min'][-self.point_num:], color='b')
+            for item in showf:
+                if len(showf) == 1:
+                    color = ['r']
+                elif len(showf) == 2:
+                    color = ['r', 'b']
+                elif len(showf) == 3:
+                    color = ['r', 'g', 'b']
+                self.ax.plot(data[item][-self.point_num:], color=color[showf.index(item)])
             self.fig.canvas.draw()
 
     def set_Xdata(self, x):
@@ -89,18 +98,18 @@ class FigureWidget(QtGui.QWidget):
         style_QMenu = QtCore.QString(style_QMenu1 + style_QMenu2 + style_QMenu3)
         self.contextMenu.setStyleSheet(style_QMenu)
 
+        self.action_datafrom = self.contextMenu.addAction(u'选择数据来源')
         self.action_pointnum = self.contextMenu.addAction(u'设置数据显示点数')
         self.action_pause = self.contextMenu.addAction(u'暂停')
         self.action_NavigationToolbar = self.contextMenu.addAction(u'显示绘图导航')
-        # self.action_addaxes = self.contextMenu.addAction(u'增加子图')
         self.action_delete = self.contextMenu.addAction(u'删除此图')
         # 将动作与处理函数相关联
         # 这里为了简单，将所有action与同一个处理函数相关联
         # 当然也可以将他们分别与不同函数关联，实现不同的功能
+        self.action_datafrom.triggered.connect(self.datafromHandler)
         self.action_pointnum.triggered.connect(self.pointnumHandler)
         self.action_pause.triggered.connect(self.pauseHandler)
         self.action_NavigationToolbar.triggered.connect(self.NavigationToolbarHandler)
-        # self.action_addaxes.triggered.connect(self.addaxesHandler)
         self.action_delete.triggered.connect(self.deleteHandler)
 
     def showContextMenu(self, pos):
@@ -111,6 +120,9 @@ class FigureWidget(QtGui.QWidget):
         coursePoint = QtGui.QCursor.pos()  # 获取当前光标的位置
         self.contextMenu.move(coursePoint)
         self.contextMenu.show()
+
+    def datafromHandler(self):
+        self.emit(self.datafromSingle)
 
     def pointnumHandler(self):
         '''
