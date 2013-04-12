@@ -12,7 +12,7 @@ from configdialog import QInputDialog, QMessageBox
 class FigureWidget(QtGui.QWidget):
     """Matplotlib Figure widget to display CPU utilization"""
 
-    datafromSingle = QtCore.SIGNAL('send()')
+    datafromSingle = QtCore.pyqtSignal(str)
 
     def __init__(self, title="Figrue", point_num=300, x=[], y=[]):
         # save the current CPU info (used by updating algorithm)R
@@ -49,7 +49,7 @@ class FigureWidget(QtGui.QWidget):
 
         self.fig.canvas.draw()
 
-        self.plotflag = False
+        self.plotflag = True
         # 与右键有关的初始化设置
         self.point_num = point_num   # 默认显示点数
         self.pauseflag = False  # 默认不暂停
@@ -122,7 +122,7 @@ class FigureWidget(QtGui.QWidget):
         self.contextMenu.show()
 
     def datafromHandler(self):
-        self.emit(self.datafromSingle)
+        self.datafromSingle.emit(str(self.objectName()))
 
     def pointnumHandler(self):
         '''

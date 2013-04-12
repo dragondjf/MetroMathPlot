@@ -15,7 +15,9 @@ import json
 
 class InteractiveManager(QtCore.QObject):
 
-    started = QtCore.SIGNAL('send(PyQt_PyObject, PyQt_PyObject)')
+    started = {'figurewidget0': QtCore.SIGNAL('send0(PyQt_PyObject, PyQt_PyObject)')}
+
+    senddata = QtCore.pyqtSignal(dict, list)
 
     def __init__(self, parent=None, **pages):
         super(InteractiveManager, self).__init__(parent)
@@ -28,32 +30,28 @@ class InteractiveManager(QtCore.QObject):
 
         QtCore.QObject.connect(getattr(self.settingdialog, 'Ok' + 'Button'), QtCore.SIGNAL('clicked()'), configdlg, QtCore.SLOT('save_settings()'))  # 点击弹出窗口OkButton，执行保存参数函数
         QtCore.QObject.connect(self.settingdialog.child, QtCore.SIGNAL('send(PyQt_PyObject)'), self, QtCore.SLOT('settings(PyQt_PyObject)'))  # 交互管理窗口获取保存的配置
-
-        # QtCore.QObject.connect(self.parent.centeralwindow.pages, QtCore.SIGNAL("currentChanged(int)"), getattr(self, 'DataShowPage'), QtCore.SLOT('stopploting()'))  # 页面切换时暂停波形绘制功能
-
-        # QtCore.QObject.connect(self, self.started, getattr(self, 'DataShowPage').figurewidget, QtCore.SLOT('startwork(PyQt_PyObject, PyQt_PyObject)'))  # 向绘图控件传递需要绘制的数据
-        
-        QtCore.QObject.connect(getattr(self, 'DataShowPage'), QtCore.SIGNAL('send(PyQt_PyObject)'), self, QtCore.SLOT('interfigure(PyQt_PyObject)'))
-        # QtCore.QObject.connect(getattr(self, 'DataShowPage'), QtCore.SIGNAL('send(PyQt_PyObject)'), self, QtCore.SLOT('interfigure(PyQt_PyObject)'))
-
-        getattr(getattr(self, 'DataShowPage'), 'Custom' + 'Button').clicked.connect(self.setdialogshow)  # 打开设置对话框
+        QtCore.QObject.connect(getattr(self, 'DataShowPage'), QtCore.SIGNAL('send(int)'), self, QtCore.SLOT('interfigure(int)'))
+        getattr(getattr(self, 'DataShowPage'),'figurewidget0').datafromSingle.connect(self.setdialogshow)
+        QtCore.QObject.connect(self.parent.centeralwindow.pages, QtCore.SIGNAL("currentChanged(int)"), getattr(self, 'DataShowPage'), QtCore.SLOT('stopploting()'))  # 页面切换时暂停波形绘制功能
+        # QtCore.QObject.connect(self, self.started['figurewidget0'], getattr(self, 'DataShowPage').figurewidget0, QtCore.SLOT('startwork(PyQt_PyObject, PyQt_PyObject)'))  # 向绘图控件传递需要绘制的数据        
+        a = getattr(getattr(self, 'DataShowPage'), 'figurewidget0')
+        self.senddata.connect(a.startwork)
+        # getattr(getattr(self, 'DataShowPage'), 'Custom' + 'Button').clicked.connect(self.setdialogshow)  # 打开设置对话框
 
         self.importwavspreed = 0.2
         self.data = algorithm.creat_data(algorithm.Names)
 
-    # def tcpServerstart(self):
-    #     # t = threading.Thread(name="Listen Thread 1", target=self.handle)
-    #     t = threading.Thread(name="Listen Thread 1", target=self.websocketHandle)
-    #     t.setDaemon(True)
-    #     t.start()
     @QtCore.pyqtSlot(int)
     def interfigure(self, i):
-        print i
+        self.started['figurewidget%d' % i] = QtCore.SIGNAL('send%d(PyQt_PyObject, PyQt_PyObject)' % i)
         f = getattr(getattr(self, 'DataShowPage'), 'figurewidget%d' % i)
-        QtCore.QObject.connect(f, QtCore.SIGNAL('send()'), self, QtCore.SLOT('setdialogshow()'))
+        getattr(getattr(self, 'DataShowPage'), 'figurewidget%d' % i).datafromSingle.connect(self.setdialogshow)
+        # QtCore.QObject.connect(self, self.started['figurewidget%d' % i], f, QtCore.SLOT('startwork(PyQt_PyObject, PyQt_PyObject)'))  # 向绘图控件传递需要绘制的数据
+        self.senddata.connect(f.startwork)
 
-    @QtCore.pyqtSlot()
-    def setdialogshow(self):
+    @QtCore.pyqtSlot(str)
+    def setdialogshow(self, objectname):
+        self.settingdialog.child.boundfig(str(objectname))
         self.settingdialog.show()
         self.settingdialog.setGeometry(self.parent.geometry())
         self.settingdialog.fadeInWidget()
@@ -63,10 +61,17 @@ class InteractiveManager(QtCore.QObject):
         self.settintparameter = kargs
         if 'wavpath' in kargs:
             self.wavfiles = util.FilenameFilter(util.path_match_platform(self.settintparameter['wavpath']))
+            self.historywavhandle(self.settintparameter['fig'])
+        else:
+            self.websocketHandle()
 
-        self.websocketHandle()
+    def historywavhandle(self, fig):
+        t = threading.Thread(name=fig, target=self.wavreplay, args=(fig,))
+        # t = threading.Thread(name="Listen Thread 1", target=self.websocketHandle)
+        t.setDaemon(True)
+        t.start()
 
-    def handle(self):
+    def wavreplay(self, fig):
         while True:
             if hasattr(self, 'wavfiles'):
                 for wavfile in self.wavfiles:
@@ -78,8 +83,9 @@ class InteractiveManager(QtCore.QObject):
                         raw_data = self.x[1024 * (i - 1):1024 * i]
                         self.data['max'][-1] = max(raw_data)
                         self.data['min'][-1] = min(raw_data)
-                        self.emit(self.started, self.data)
-                        time.sleep(self.importwavspreed / self.wav_parameter['importwavspreed'])
+                        self.senddata.emit(self.data, ['max', 'min'])
+                        # getattr(getattr(self, 'DataShowPage'), fig).startwork(self.data, ['max', 'min'])
+                        time.sleep(self.importwavspreed / self.settintparameter['importwavspreed'])
             else:
                 pass
 

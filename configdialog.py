@@ -523,6 +523,8 @@ class ConfigDialog(QtGui.QDialog):
         mainLayout.addLayout(horizontalLayout)
         self.setLayout(mainLayout)
 
+        self.fig = ''
+
     @QtCore.pyqtSlot()
     def save_settings(self):
         currentwidget =  self.pagesWidget.currentWidget()
@@ -550,10 +552,14 @@ class ConfigDialog(QtGui.QDialog):
             kargs['starttime'] = self.configpage.startTimeEdit.dateTime().toTime_t()
             kargs['endtime'] = self.configpage.startTimeEdit.dateTime().toTime_t()
             kargs['importwavspreed'] = int(unicode(self.configpage.importWavSpreedCombo.currentText()))
+            kargs['fig'] = getattr(self, 'fig')
         else:
             pass
         self.emit(QtCore.SIGNAL('send(PyQt_PyObject)'), kargs)
         self.parent().close()
+
+    def boundfig(self, fig):
+        setattr(self, 'fig', fig)
 
     def changePage(self, current, previous):
         if not current:

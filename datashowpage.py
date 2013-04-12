@@ -26,7 +26,7 @@ class DataShowPage(QtGui.QWidget):
         self.splitter_figure.setOrientation(QtCore.Qt.Vertical)
         i = 0
         setattr(self, 'figurewidget%d' % i ,FigureWidget('Figure%d' % i, point_num=100))
-
+        getattr(self, 'figurewidget%d' % i).setObjectName('figurewidget%d' % i)
         self.splitter_figure.addWidget(getattr(self, 'figurewidget%d' % i))
 
         self.splitter.addWidget(self.navigation)
@@ -59,19 +59,20 @@ class DataShowPage(QtGui.QWidget):
         self.navigation.setLayout(navigationLayout)
         set_skin(self.navigation, os.sep.join(['skin', 'qss', 'MetroDataShow.qss']))
 
-        # getattr(self, 'StartButton').clicked.connect(self.startploting)
-        # getattr(self, 'PauseButton').clicked.connect(self.stopploting)
+        getattr(self, 'StartButton').clicked.connect(self.startploting)
+        getattr(self, 'PauseButton').clicked.connect(self.stopploting)
         getattr(self, 'AddButton').clicked.connect(self.addFigure)
 
-    # def startploting(self):
-    #     self.figurewidget.plotflag = True
+    def startploting(self):
+        self.figurewidget0.plotflag = True
 
-    # @QtCore.pyqtSlot()
-    # def stopploting(self):
-    #     self.figurewidget.plotflag = False
+    @QtCore.pyqtSlot()
+    def stopploting(self):
+        self.figurewidget0.plotflag = False
 
     def addFigure(self):
         i = self.splitter_figure.count()
         setattr(self, 'figurewidget%d' % i ,FigureWidget('Figure%d' % i, point_num=100))
+        getattr(self, 'figurewidget%d' % i).setObjectName('figurewidget%d' % i)
         self.splitter_figure.addWidget(getattr(self, 'figurewidget%d' % i))
-        self.emit(QtCore.SIGNAL('send(PyQt_PyObject)'), i)
+        self.emit(QtCore.SIGNAL('send(int)'), i)
