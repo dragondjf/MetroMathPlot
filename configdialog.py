@@ -46,7 +46,6 @@ import sys
 from PyQt4 import QtCore, QtGui
 from effects import FaderWidget
 from guiutil import set_skin
-from algorithm import Names
 
 
 class ConfigurationPage(QtGui.QWidget):
@@ -127,7 +126,7 @@ class FsWidget(QtGui.QWidget):
         self.featurevalueWidget = self.creatFeatureValueWidget()
 
         pointnumberLabel = QtGui.QLabel(u'显示波形点数：')
-        pointnumberEdit =  QtGui.QSpinBox()
+        pointnumberEdit = QtGui.QSpinBox()
         pointnumberEdit.setMaximum(4096)
         pointnumberEdit.setValue(300)
         pointnumberEdit.setMinimum(1)
@@ -150,15 +149,15 @@ class FsWidget(QtGui.QWidget):
     def creatFeatureValueWidget(self):
         featurevalueWidget = QtGui.QWidget()
         fsGridLoyout = QtGui.QGridLayout()
-        Names = [
-            ['max', 'min', 'davg'] + ['f%d' % n for n in range(0, 8)] + ['time'], 
+        names = [
+            ['max', 'min', 'davg'] + ['f%d' % n for n in range(0, 8)] + ['time'],
             ['alarmflag', 'alarmrate'] + ['data%d' % n for n in range(0, 10)]
         ]
-        for keys in Names:
+        for keys in names:
             for key in keys:
                 setattr(self, key + 'CheckBox', QtGui.QCheckBox(key))
                 getattr(self, key + 'CheckBox').setObjectName(key + 'CheckBox')
-                fsGridLoyout.addWidget(getattr(self, key + 'CheckBox'), Names.index(keys), keys.index(key))
+                fsGridLoyout.addWidget(getattr(self, key + 'CheckBox'), names.index(keys), keys.index(key))
         featurevalueWidget.setLayout(fsGridLoyout)
         return featurevalueWidget
 
@@ -199,7 +198,7 @@ class FsPage(QtGui.QWidget):
     def deletefswidget(self):
         index = self.layout().indexOf(self.navigation)
         if index > 0:
-            getattr(self, 'fswidget' + str(index-1)).deleteLater()
+            getattr(self, 'fswidget' + str(index - 1)).deleteLater()
         else:
             QMessageBox().information(u'实时波形设置必须至少有一个!')
 
@@ -527,7 +526,7 @@ class ConfigDialog(QtGui.QDialog):
 
     @QtCore.pyqtSlot()
     def save_settings(self):
-        currentwidget =  self.pagesWidget.currentWidget()
+        currentwidget = self.pagesWidget.currentWidget()
         kargs = {}
         if currentwidget is self.fspage:
             i = 0
@@ -538,9 +537,9 @@ class ConfigDialog(QtGui.QDialog):
                     cupa['featurevalue'] = {}
                     for checkbox in widget.featurevalueWidget.children():
                         if isinstance(checkbox, QtGui.QCheckBox):
-                            cupa['featurevalue'][unicode(checkbox.text())] =  checkbox.isChecked()
-                    cupa['featurevalue']['st'] =  widget.pointnumberEdit.value()
-                    cupa['featurevalue']['ed'] =  1
+                            cupa['featurevalue'][unicode(checkbox.text())] = checkbox.isChecked()
+                    cupa['featurevalue']['st'] = widget.pointnumberEdit.value()
+                    cupa['featurevalue']['ed'] = 1
                     cupa['gno'] = unicode(widget.PACombo.currentText())
                     kargs[i] = cupa
                     i += 1
