@@ -146,7 +146,7 @@ class MainWindow(QtGui.QMainWindow):
         cp = QtGui.QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
-        # self.setGeometry(QtGui.QDesktopWidget().availableGeometry())
+        self.setGeometry(QtGui.QDesktopWidget().availableGeometry())
 
     @QtCore.pyqtSlot()
     def windowMaxNormal(self):
