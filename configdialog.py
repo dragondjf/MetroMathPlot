@@ -45,7 +45,7 @@ import os
 import sys
 from PyQt4 import QtCore, QtGui
 from effects import FaderWidget
-from guiutil import set_skin
+from guiutil import set_skin, movecenter
 
 
 class ConfigurationPage(QtGui.QWidget):
@@ -85,6 +85,10 @@ class ConfigurationPage(QtGui.QWidget):
         self.importWavSpreedCombo.addItem('2')
         self.importWavSpreedCombo.addItem('3')
         self.importWavSpreedCombo.addItem('4')
+        self.importWavSpreedCombo.addItem('5')
+        self.importWavSpreedCombo.addItem('6')
+        self.importWavSpreedCombo.addItem('7')
+        self.importWavSpreedCombo.addItem('8')
 
         self.SetPALayout = QtGui.QGridLayout()
         self.SetPALayout.addWidget(self.ipLabel, 0, 0)
@@ -176,13 +180,13 @@ class FsPage(QtGui.QWidget):
 
         self.fswidget0 = FsWidget()
 
-        self.createNavigation()
-        getattr(self, 'AddButton').clicked.connect(self.addfswidget)
-        getattr(self, 'DeleteButton').clicked.connect(self.deletefswidget)
+        # self.createNavigation()
+        # getattr(self, 'AddButton').clicked.connect(self.addfswidget)
+        # getattr(self, 'DeleteButton').clicked.connect(self.deletefswidget)
 
         mainLayout = QtGui.QVBoxLayout()
         mainLayout.addWidget(self.fswidget0)
-        mainLayout.addWidget(self.navigation)
+        # mainLayout.addWidget(self.navigation)
         mainLayout.addStretch(1)
 
         self.setLayout(mainLayout)
@@ -306,13 +310,8 @@ class QInputDialog(QtGui.QDialog):
         set_skin(self, os.sep.join(['skin', 'qss', 'MetroDialog.qss']))  # 设置弹出框样式
         self.setWindowIcon(QtGui.QIcon('icons/Write.png'))
         self.setModal(True)
+        self.setGeometry(500,600,400,100)
         self.createNavigation()
-
-    def center(self):
-        qr = self.frameGeometry()
-        cp = QtGui.QDesktopWidget().availableGeometry().center()
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
 
     def createNavigation(self):
         buttons = ['Ok', 'Cancel']
@@ -324,7 +323,7 @@ class QInputDialog(QtGui.QDialog):
             getattr(self, button).setObjectName(button)
             navigationLayout.addWidget(getattr(self, button))
         self.navigation.setLayout(navigationLayout)
-        self.navigation.setMaximumHeight(60)
+        # self.navigation.setMaximumHeight(10)
         self.navigation.setContentsMargins(0, 0, 0, 0)
 
         getattr(self, 'Cancel' + 'Button').clicked.connect(self.clickReturn)
@@ -358,7 +357,7 @@ class QInputDialog(QtGui.QDialog):
         self.value = self.intValue.value()
         self.flag = False
 
-        self.center()
+        movecenter(self)
         self.exec_()
         return self.intValue.value(), self.flag
 
@@ -522,14 +521,12 @@ class ConfigDialog(QtGui.QDialog):
         mainLayout.addLayout(horizontalLayout)
         self.setLayout(mainLayout)
 
-        self.fig = ''
 
     @QtCore.pyqtSlot()
     def save_settings(self):
         currentwidget = self.pagesWidget.currentWidget()
         kargs = {}
         if currentwidget is self.fspage:
-            i = 0
             for widget in self.fspage.children():
                 if isinstance(widget, FsWidget):
                     cupa = {}
@@ -541,8 +538,7 @@ class ConfigDialog(QtGui.QDialog):
                     cupa['featurevalue']['st'] = widget.pointnumberEdit.value()
                     cupa['featurevalue']['ed'] = 1
                     cupa['gno'] = unicode(widget.PACombo.currentText())
-                    kargs[i] = cupa
-                    i += 1
+                    kargs = cupa
 
         elif currentwidget is self.configpage:
             kargs['ip'] = unicode(self.configpage.ipEdit.text())

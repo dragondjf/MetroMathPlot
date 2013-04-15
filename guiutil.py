@@ -43,3 +43,10 @@ def set_skin(QApplication, qssfile, style=''):
     if qss.isOpen():
         QApplication.setStyleSheet(QtCore.QVariant(qss.readAll()).toString() + style)
     qss.close()
+
+
+def movecenter(w):
+    qr = w.frameGeometry()
+    cp = QtGui.QDesktopWidget().availableGeometry().center()
+    qr.moveCenter(cp)
+    w.move(qr.topLeft())
