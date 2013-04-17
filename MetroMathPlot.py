@@ -176,11 +176,11 @@ class MainWindow(QtGui.QMainWindow):
             if hasattr(currentpage, 'navigation'):
                 if self.navigation_flag:
                     currentpage.navigation.setVisible(False)
-                    currentpage.action_NavigationToolbar.setText(u'显示导航')
+                    # currentpage.action_NavigationToolbar.setText(u'显示导航')
                     self.navigation_flag = False
                 else:
                     currentpage.navigation.setVisible(True)
-                    currentpage.action_NavigationToolbar.setText(u'隐藏导航')
+                    # currentpage.action_NavigationToolbar.setText(u'隐藏导航')
                     self.navigation_flag = True
         elif evt.key() == QtCore.Qt.Key_F9:
             currentpage = self.centralWidget().pages.currentWidget().child

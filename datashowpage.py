@@ -118,7 +118,7 @@ class WaveFigure(FigureWidget):
                         color = ['r', 'g', 'b']
                     self.ax.plot(padata[item][-self.point_num:], color=color[showf.index(item)])
                 self.fig.canvas.draw()
-        except Exception,e:
+        except Exception, e:
             pass
 
     def createContextMenu(self):
@@ -278,6 +278,7 @@ class WaveThreadHandler(threading.Thread):
                 for key in item:
                     padata[key][-1] = item[key]
             self.figure.startwork(padata, showf)
+
 
 class WaveProcessHandler(multiprocessing.Process):
     def __init__(self, figure):

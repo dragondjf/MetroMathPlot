@@ -260,6 +260,8 @@ class ViewPage(QtGui.QWidget):
         self.setLayout(self.mainLayout)
         set_skin(self, os.sep.join(['skin', 'qss', 'MetroViewPage.qss']))
 
+        self.navigation_flag = True   # 导航标志，初始化时显示导航
+
     def creatSearchEdit(self):
         self.searchEdit = QtGui.QLineEdit()
         self.searchEdit.setObjectName('SearchEdit')

@@ -48,10 +48,8 @@ class FormPage(QtGui.QWidget):
         self.setLayout(self.mainLayout)
         self.layout().setContentsMargins(0, 0, 10, 10)
 
-        configdlg = configdialog.ConfigDialog()
-        self.settingdialog = configdialog.ChildDialog(None, configdlg)
-        QtCore.QObject.connect(getattr(self.settingdialog, 'Ok' + 'Button'), QtCore.SIGNAL('clicked()'), configdlg, QtCore.SLOT('save_settings()'))  # 点击弹出窗口OkButton，执行保存参数函数
-        # QtCore.QObject.connect(self.settingdialog.child, QtCore.SIGNAL('send(PyQt_PyObject)'), self, QtCore.SLOT('settings(PyQt_PyObject)'))  # 交互管理窗口获取保存的配置
+        self.navigation_flag = True   # 导航标志，初始化时显示导航
+        set_skin(self, os.sep.join(['skin', 'qss', 'Metroform.qss']))
 
     def createLeftToolBar(self):
         navbutton = ['Start', 'Pause', 'Add', 'Show']
@@ -70,35 +68,55 @@ class FormPage(QtGui.QWidget):
             getattr(self, button).setObjectName(button)
             navigationLayout.addWidget(getattr(self, button))
         self.navigation.setLayout(navigationLayout)
-        set_skin(self.navigation, os.sep.join(['skin', 'qss', 'Metroform.qss']))
 
-        getattr(self, 'AddButton').clicked.connect(self.addPlotFig)
-        getattr(self, 'ShowButton').clicked.connect(self.ShowPlotFig)
+        getattr(self, 'StartButton').clicked.connect(self.startHandler)
+        getattr(self, 'PauseButton').clicked.connect(self.pauseHandler)
+        getattr(self, 'AddButton').clicked.connect(self.addHandler)
+        getattr(self, 'ShowButton').clicked.connect(self.ShowHandler)
 
     def createTopToolBar(self):
         toolbar = QtGui.QToolBar()
-        self.auto_yrange_checkbox = QtGui.QCheckBox(u"Y轴自动调节")
-        self.auto_xrange_checkbox = QtGui.QCheckBox(u"X轴自动调节")
+        toolbar.setObjectName("PlotToolBar")
+        self.point_numLabel = QtGui.QLabel(u"显示波形点数")
         self.xrange_box = QtGui.QSpinBox()
-        self.xrange_box.setMinimum(5)
-        self.xrange_box.setMaximum(50)
-        self.xrange_box.setValue(10)
-        self.auto_xrange_checkbox.setChecked(True)
-        self.auto_yrange_checkbox.setChecked(True)
-        toolbar.addWidget(self.auto_yrange_checkbox)
-        toolbar.addWidget(self.auto_xrange_checkbox)
+        self.xrange_box.setMinimum(1)
+        self.xrange_box.setMaximum(4096)
+        self.xrange_box.setSingleStep(300)
+        self.xrange_box.setValue(300)
+        toolbar.addWidget(self.point_numLabel)
         toolbar.addWidget(self.xrange_box)
+
+        self.xrange_box.valueChanged.connect(self.pointchange)
+
         self.toptoolbar = toolbar
 
-    def addPlotFig(self):
+    def startHandler(self):
+        for index in range(self.fvbox.count() - 1):
+            plotfig = getattr(self, 'plotfig%d' % index)
+            plotfig.startHandler()
+
+        getattr(self, 'StartButton').setEnabled(False)
+        getattr(self, 'PauseButton').setEnabled(True)
+
+    def pauseHandler(self):
+        for index in range(self.fvbox.count() - 1):
+            plotfig = getattr(self, 'plotfig%d' % index)
+            plotfig.pauseHandler()
+
+        getattr(self, 'StartButton').setEnabled(True)
+        getattr(self, 'PauseButton').setEnabled(False)
+
+    def addHandler(self):
         i = self.fvbox.count() - 1
         self.createPlotFig(i, self.fvbox)
 
         for index in range(self.fvbox.count() - 1):
             plotfig = getattr(self, 'plotfig%d' % index)
             getattr(plotfig, 'HideButton').setEnabled(True)
+        if i == 3:
+            getattr(self, 'AddButton').setEnabled(False)
 
-    def ShowPlotFig(self):
+    def ShowHandler(self):
         for index in range(self.fvbox.count() - 1):
             plotfig = getattr(self, 'plotfig%d' % index)
             if not plotfig.isVisible():
@@ -106,18 +124,15 @@ class FormPage(QtGui.QWidget):
                 plotfig.timer = plotfig.startTimer(200)
 
     def createPlotFig(self, index, fvbox):
-        setattr(self, 'plotfig%d' % index, WaveFigure())
+        setattr(self, 'plotfig%d' % index, WaveFigure(point_num=self.xrange_box.value()))
         plot = getattr(self, 'plotfig%d' % index)
         plot.setObjectName('WaveFigure%d' % index)
         fvbox.addWidget(plot)
-        # manager.register_standard_tools()
-        # manager.get_default_tool().activate()
 
-        # style = ""
-        # for i in range(self.fvbox.count() - 1):
-        #     style += "QPushButton#PlotButton%d{height:%dpx}" % (i, 1000)
-
-        # set_skin(self, os.sep.join(['skin', 'qss', 'Metroform.qss']), style)
+    def pointchange(self, i):
+        for index in range(self.fvbox.count() - 1):
+            plotfig = getattr(self, 'plotfig%d' % index)
+            plotfig.point_num = i
 
 
 class PlotWidget(QtGui.QWidget):
@@ -127,13 +142,15 @@ class PlotWidget(QtGui.QWidget):
     x, y: NumPy arrays
     func: function object (the signal filter to be tested)
     """
-    def __init__(self, parent=None, x=[], y=[], func=None):
+    def __init__(self, parent=None, x=[], y=[], func=None, point_num=300):
         super(PlotWidget, self).__init__(parent)
         self.x = x
         self.y = y
         self.func = func
         #---guiqwt curve item attribute:
         self.curve_item = None
+
+        self.point_num = point_num
         self.setup_widget()
 
     def setup_widget(self):
@@ -172,12 +189,14 @@ class PlotWidget(QtGui.QWidget):
                 navigationLayout.addWidget(getattr(self, button), self.ctrlbuttons.index(buttons), buttons.index(item))
 
         self.ctrlwidget.setLayout(navigationLayout)
+        getattr(self, 'StartButton').setEnabled(False)
+        getattr(self, 'PauseButton').setEnabled(False)
         set_skin(self.ctrlwidget, os.sep.join(['skin', 'qss', 'MetroGuiQwtPlot.qss']))
 
 
 class WaveFigure(PlotWidget):
-    def __init__(self):
-        super(WaveFigure, self).__init__()
+    def __init__(self, point_num=300):
+        super(WaveFigure, self).__init__(point_num=point_num)
 
         configdlg = configdialog.ConfigDialog()
         self.settingdialog = configdialog.ChildDialog(None, configdlg)
@@ -192,11 +211,17 @@ class WaveFigure(PlotWidget):
     def startwork(self, padata, showf):
         for key in showf:
             if not hasattr(self, key + 'item'):
-                setattr(self, key + 'item', make.curve(range(300), padata[key][-300:]))
+                if len(showf) == 1:
+                        color = ['r']
+                elif len(showf) == 2:
+                    color = ['r', 'b']
+                elif len(showf) == 3:
+                    color = ['r', 'b', 'g']
+                setattr(self, key + 'item', make.curve(range(self.point_num), padata[key][-self.point_num:], color=color[showf.index(key)]))
                 self.curvewidget.plot.add_item(getattr(self, key + 'item'))
             else:
                 for key in showf:
-                    getattr(self, key + 'item').set_data(range(300), padata[key][-300:])
+                    getattr(self, key + 'item').set_data(range(self.point_num), padata[key][-self.point_num:])
 
     def datafromHandler(self):
         self.setdialogshow(self.objectName())
@@ -211,15 +236,17 @@ class WaveFigure(PlotWidget):
 
     def hideHandler(self):
         self.setVisible(False)
-        self.killTimer(self.timer)
+        if hasattr(self, 'timer'):
+            self.killTimer(self.timer)
 
     def startHandler(self):
-        self.timer = self.startTimer(200)
         getattr(self, 'StartButton').setEnabled(False)
         getattr(self, 'PauseButton').setEnabled(True)
+        self.timer = self.startTimer(200)
 
     def pauseHandler(self):
-        self.killTimer(self.timer)
+        if hasattr(self, 'timer'):
+            self.killTimer(self.timer)
         getattr(self, 'PauseButton').setEnabled(False)
         getattr(self, 'StartButton').setEnabled(True)
 
@@ -238,6 +265,8 @@ class WaveFigure(PlotWidget):
                 self.datahandler = WaveThreadHandler(self)
             else:
                 self.datahandler.cmd_queue.put_nowait(self.settintparameter)
+
+        getattr(self, 'StartButton').setEnabled(True)
 
     def timerEvent(self, event):
         for item in self.curvewidget.plot.get_items():

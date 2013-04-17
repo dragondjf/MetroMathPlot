@@ -10,7 +10,7 @@ class ContextMenu(QtGui.QWidget):
     def __init__(self, parent=None):
         super(ContextMenu, self).__init__(parent)
         self.parent = parent
-        self.createContextMenu()
+        # self.createContextMenu()
 
     def createContextMenu(self):
         '''
@@ -66,10 +66,10 @@ class ContextMenu(QtGui.QWidget):
             else:
                 self.navigation.setVisible(False)
 
-            if self.navigation.isVisible():
-                self.action_NavigationToolbar.setText(u'隐藏导航')
-            else:
-                self.action_NavigationToolbar.setText(u'显示导航')
+            # if self.navigation.isVisible():
+            #     self.action_NavigationToolbar.setText(u'隐藏导航')
+            # else:
+            #     self.action_NavigationToolbar.setText(u'显示导航')
 
 
 class ChildPage(ContextMenu):
@@ -84,7 +84,7 @@ class ChildPage(ContextMenu):
         mainLayout.addWidget(self.navigation)
         mainLayout.addWidget(self.child)
         self.setLayout(mainLayout)
-        self.layout().setContentsMargins(0, 0, 0, 0)
+        self.layout().setContentsMargins(5, 5, 0, 0)
 
     def createNavigation(self):
         navbutton = ['Navigation', 'Back', 'Forward', 'Min', 'Max', 'Close']
