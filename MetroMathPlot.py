@@ -201,8 +201,6 @@ def main():
     main = MainWindow()
     main.show()
     interactivemanager = InteractiveManager(main, **main.centeralwindow.funcpages)
-    # interactivemanager.tcpServerstart()
-
     sys.exit(app.exec_())
 
 if __name__ == '__main__':

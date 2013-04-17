@@ -237,7 +237,7 @@ class WaveFigure(FigureWidget):
 class WaveThreadHandler(threading.Thread):
     def __init__(self, figure):
         threading.Thread.__init__(self)
-        self.cmd_queue= Queue.Queue()
+        self.cmd_queue = Queue.Queue()
         self.figure = figure
         self.paid = self.figure.settintparameter['_id']
         self.featurevalueflags = self.figure.settintparameter['featurevalue']
@@ -316,7 +316,7 @@ class WaveReplayHandler(threading.Thread):
         self.cmd_queue = Queue.Queue()
         self.figure = figure
         self.wavfiles = wavfiles
-        self.importwavspreed = 0.2
+        self.importwavspreed = 0.1
         self.setDaemon(True)
         self.start()
 

@@ -30,13 +30,13 @@ QPushButton:hover, QPushButton:pressed , QPushButton:checked
 }
 QPushButton:hover
 {
-	background-image: url(skin/icons/dark/appbar.navigate.next.png);
+/*	background-image: url(skin/icons/dark/appbar.navigate.next.png);*/
 	background-repeat:no-repeat;
 	background-position: center left;
 }
 QPushButton:pressed, QPushButton:checked
 {
-	background-image: url(skin/icons/light/appbar.navigate.next.png);
+	/*background-image: url(skin/icons/light/appbar.navigate.next.png);*/
 	background-repeat:no-repeat;
 	background-position: center left;
 }

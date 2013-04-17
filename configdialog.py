@@ -122,9 +122,17 @@ class FsWidget(QtGui.QWidget):
     def __init__(self, parent=None):
         super(FsWidget, self).__init__(parent)
         fsGroup = QtGui.QGroupBox(u"实时波形设置")
+        DBIpLable = QtGui.QLabel(u"数据库（Ip:Port）")
+        self.DBIPEdit = QtGui.QLineEdit(u"127.0.0.1:27017")
+        DBButton = QtGui.QPushButton(u"查询数据库")
+        DBButton.clicked.connect(self.initfromMongoDB)
+        DBGrid = QtGui.QGridLayout()
+        DBGrid.addWidget(self.DBIPEdit, 0, 0)
+        DBGrid.addWidget(DBButton, 0, 1)
+
         PALabel = QtGui.QLabel(u"选择防区：")
         self.PACombo = QtGui.QComboBox()
-        self.initfromMongoDB()
+        # self.initfromMongoDB()
 
         featurevalueLabel = QtGui.QLabel(u'选择特征值：')
         self.featurevalueWidget = self.creatFeatureValueWidget()
@@ -137,12 +145,14 @@ class FsWidget(QtGui.QWidget):
         self.pointnumberEdit = pointnumberEdit
 
         fsLayout = QtGui.QGridLayout()
-        fsLayout.addWidget(PALabel, 0, 0)
-        fsLayout.addWidget(self.PACombo, 0, 1)
-        fsLayout.addWidget(featurevalueLabel, 1, 0)
-        fsLayout.addWidget(self.featurevalueWidget, 1, 1)
-        fsLayout.addWidget(pointnumberLabel, 2, 0)
-        fsLayout.addWidget(self.pointnumberEdit, 2, 1)
+        fsLayout.addWidget(DBIpLable, 0, 0)
+        fsLayout.addLayout(DBGrid, 0, 1)
+        fsLayout.addWidget(PALabel, 1, 0)
+        fsLayout.addWidget(self.PACombo, 1, 1)
+        fsLayout.addWidget(featurevalueLabel, 2, 0)
+        fsLayout.addWidget(self.featurevalueWidget, 2, 1)
+        fsLayout.addWidget(pointnumberLabel, 3, 0)
+        fsLayout.addWidget(self.pointnumberEdit, 3, 1)
         fsGroup.setLayout(fsLayout)
 
         mainLayout = QtGui.QVBoxLayout()
@@ -168,10 +178,13 @@ class FsWidget(QtGui.QWidget):
     def initfromMongoDB(self):
         self.PAlist = {}
         from mongokit import Connection
-        connection = Connection()
-        for docment in connection['gsd']['PA_Col'].find():
-            self.PACombo.addItem(docment['gno'])
-            self.PAlist[docment['gno']] = str(docment['_id'])
+        try:
+            connection = Connection()
+            for docment in connection['gsd']['PA_Col'].find():
+                self.PACombo.addItem(docment['gno'])
+                self.PAlist[docment['gno']] = str(docment['_id'])
+        except Exception, e:
+            print e
 
 
 class FsPage(QtGui.QWidget):
@@ -310,7 +323,7 @@ class QInputDialog(QtGui.QDialog):
         set_skin(self, os.sep.join(['skin', 'qss', 'MetroDialog.qss']))  # 设置弹出框样式
         self.setWindowIcon(QtGui.QIcon('icons/Write.png'))
         self.setModal(True)
-        self.setGeometry(500,600,400,100)
+        self.setGeometry(500, 600, 400, 100)
         self.createNavigation()
 
     def createNavigation(self):

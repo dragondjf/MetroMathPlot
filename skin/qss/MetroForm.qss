@@ -1,4 +1,8 @@
 /* Metro Style*/
+QToolBar{
+	background-color: rgb(85, 170, 255);
+}
+
 QPushButton {
     background: green;
     border: none;
@@ -9,20 +13,17 @@ QPushButton:hover, QPushButton:pressed , QPushButton:checked, QPushButton:focus
 {
 	background-color: rgb(85, 170, 255);
 	text-align: center;
-	/*padding-right: 20px;*/
 	font-weight:100
 }
 
 QPushButton:hover
 {
-	/*background-image: url(skin/icons/dark/appbar.arrow.left.png);*/
 	background-repeat:no-repeat;
 	background-position: center left;
 }
 
 QPushButton:pressed, QPushButton:checked
 {
-	/*background-image: url(skin/icons/light/appbar.arrow.left.png);*/
 	background-repeat:no-repeat;
 	background-position: center right;
 }
@@ -90,41 +91,11 @@ QPushButton#PauseButton:pressed, QPushButton#PauseButton:checked
 }
 
 
-QPushButton#CustomButton {
-    width: 80px; 
-    height: 400px;
-    /*background: green;*/
-	background-image: url(skin/icons/dark/appbar.cell.function.png);
-	background-repeat:no-repeat;
-	background-position: center top;
-}
-
-QPushButton#CustomButton:hover, QPushButton#CustomButton:pressed , QPushButton#CustomButton:checked
-{
-	background-color: rgb(85, 170, 255);
-	text-align: center;
-	/*padding-right: 20px;*/
-	font-weight:100
-}
-
-QPushButton#CustomButton:hover
-{
-	background-image: url(skin/icons/dark/appbar.cell.function.png);
-	background-repeat:no-repeat;
-	background-position: center bottom;
-}
-QPushButton#CustomButton:pressed, QPushButton#CustomButton:checked
-{
-	background-image: url(skin/icons/light/appbar.cell.function.png);
-	background-repeat:no-repeat;
-	background-position: center bottom;
-}
-
 QPushButton#AddButton {
     width: 80px; 
     height: 400px;
     /*background: green;*/
-	background-image: url(skin/icons/dark/appbar.add.png);
+	background-image: url(skin/icons/dark/appbar.cell.function.png);
 	background-repeat:no-repeat;
 	background-position: center top;
 }
@@ -139,11 +110,42 @@ QPushButton#AddButton:hover, QPushButton#AddButton:pressed , QPushButton#AddButt
 
 QPushButton#AddButton:hover
 {
-	background-image: url(skin/icons/dark/appbar.add.png);
+	background-image: url(skin/icons/dark/appbar.cell.function.png);
 	background-repeat:no-repeat;
 	background-position: center bottom;
 }
 QPushButton#AddButton:pressed, QPushButton#AddButton:checked
+{
+	background-image: url(skin/icons/light/appbar.cell.function.png);
+	background-repeat:no-repeat;
+	background-position: center bottom;
+}
+
+
+QPushButton#ShowButton {
+    width: 80px; 
+    height: 400px;
+    /*background: green;*/
+	background-image: url(skin/icons/dark/appbar.add.png);
+	background-repeat:no-repeat;
+	background-position: center top;
+}
+
+QPushButton#ShowButton:hover, QPushButton#ShowButton:pressed , QPushButton#ShowButton:checked
+{
+	background-color: rgb(85, 170, 255);
+	text-align: center;
+	/*padding-right: 20px;*/
+	font-weight:100
+}
+
+QPushButton#ShowButton:hover
+{
+	background-image: url(skin/icons/dark/appbar.add.png);
+	background-repeat:no-repeat;
+	background-position: center bottom;
+}
+QPushButton#ShowButton:pressed, QPushButton#ShowButton:checked
 {
 	background-image: url(skin/icons/light/appbar.add.png);
 	background-repeat:no-repeat;
