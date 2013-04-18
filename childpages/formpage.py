@@ -11,7 +11,8 @@ from guiqwt.plot import PlotManager, CurvePlot
 from guiqwt.plot import CurveWidget
 from guiqwt.builder import make
 import guiqwt
-from guiutil import set_skin, movecenter
+
+from guiutil import *
 import util
 import configdialog
 from datashowpage import WaveReplayHandler, WaveThreadHandler

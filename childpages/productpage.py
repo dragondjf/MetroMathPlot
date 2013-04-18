@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui
 from PyQt4 import QtCore
+from guiutil import *
 
 
 class ProductPage(QtGui.QWidget):

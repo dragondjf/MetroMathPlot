@@ -19,7 +19,7 @@ QPushButton
 	font-size: 15px;
 	text-align: center;
     width: 60px; 
-    height: 400px;
+    /*height: 400px;*/
 }
 QPushButton:hover, QPushButton:pressed , QPushButton:checked
 {

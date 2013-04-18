@@ -2,17 +2,14 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui
 from PyQt4 import QtCore
-import matplotlib
+
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
 from matplotlib.figure import Figure
-from configdialog import QInputDialog, QMessageBox
 
 
 class FigureWidget(QtGui.QWidget):
     """Matplotlib Figure widget to display CPU utilization"""
-
-    datafromSingle = QtCore.pyqtSignal(str)
 
     def __init__(self, title="Figrue", point_num=300, x=[], y=[]):
         # save the current CPU info (used by updating algorithm)R

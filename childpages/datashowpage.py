@@ -12,11 +12,9 @@ import time
 import websocket
 import json
 
-from configdialog import QInputDialog, QMessageBox
+from guiutil import *
 from figurewidget import FigureWidget
 import configdialog
-from guiutil import set_skin, movecenter
-# from cache import padata
 import util
 
 

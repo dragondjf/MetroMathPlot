@@ -3,8 +3,7 @@
 import os
 from PyQt4 import QtGui
 from PyQt4 import QtCore
-import threading
-from guiutil import set_skin
+from guiutil import *
 
 
 class TreeItem(object):
@@ -20,7 +19,7 @@ class TreeItem(object):
         return len(self.childItems)
 
     def childNumber(self):
-        if self.parentItem != None:
+        if self.parentItem is not None:
             return self.parentItem.childItems.index(self)
         return 0
 
@@ -148,8 +147,7 @@ class TreeModel(QtCore.QAbstractItemModel):
     def insertRows(self, position, rows, parent=QtCore.QModelIndex()):
         parentItem = self.getItem(parent)
         self.beginInsertRows(parent, position, position + rows - 1)
-        success = parentItem.insertChildren(position, rows,
-                self.rootItem.columnCount())
+        success = parentItem.insertChildren(position, rows, self.rootItem.columnCount())
         self.endInsertRows()
 
         return success
@@ -210,33 +208,33 @@ class TreeModel(QtCore.QAbstractItemModel):
             dbdata = [db, '', 'db']
             parents[0].insertChildren(parents[-1].childCount(), 1, self.rootItem.columnCount())
             for column in range(len(dbdata)):
-                parents[-1].child(parents[-1].childCount() -1).setData(column, dbdata[column])
+                parents[-1].child(parents[-1].childCount() - 1).setData(column, dbdata[column])
             dbs.append(parents[-1].child(parents[-1].childCount() - 1))
 
             cols = []
             for collection in connection[db].collection_names():
                 coldata = [collection, '', 'collection']
-                dbs[-1].insertChildren(dbs[-1].childCount(), 1 , self.rootItem.columnCount())
+                dbs[-1].insertChildren(dbs[-1].childCount(), 1, self.rootItem.columnCount())
                 for column in range(len(coldata)):
-                    dbs[-1].child(dbs[-1].childCount() -1).setData(column, coldata[column])
+                    dbs[-1].child(dbs[-1].childCount() - 1).setData(column, coldata[column])
 
                 cols.append(dbs[-1].child(dbs[-1].childCount() - 1))
                 docs = []
                 for docment in connection[db][collection].find():
                     if '_id' in docment:
                         docdata = [repr(docment[u'_id']), str(docment), 'docment']
-                        cols[-1].insertChildren(cols[-1].childCount(), 1 , self.rootItem.columnCount())
+                        cols[-1].insertChildren(cols[-1].childCount(), 1, self.rootItem.columnCount())
                     else:
                         docdata = [str(docment[u'ns']), str(docment), 'docment']
-                        cols[-1].insertChildren(cols[-1].childCount(), 1 , self.rootItem.columnCount())
+                        cols[-1].insertChildren(cols[-1].childCount(), 1, self.rootItem.columnCount())
                     for column in range(len(coldata)):
-                        cols[-1].child(cols[-1].childCount() -1).setData(column, docdata[column])
+                        cols[-1].child(cols[-1].childCount() - 1).setData(column, docdata[column])
                     docs.append(cols[-1].child(cols[-1].childCount() - 1))
                     for key, value in docment.items():
                         itemdata = [key, repr(value), str(type(value))]
-                        docs[-1].insertChildren(docs[-1].childCount(), 1 , self.rootItem.columnCount())
+                        docs[-1].insertChildren(docs[-1].childCount(), 1, self.rootItem.columnCount())
                         for column in range(len(coldata)):
-                            docs[-1].child(docs[-1].childCount() -1).setData(column, itemdata[column])
+                            docs[-1].child(docs[-1].childCount() - 1).setData(column, itemdata[column])
 
 
 class ViewPage(QtGui.QWidget):
@@ -298,7 +296,7 @@ class ViewPage(QtGui.QWidget):
     def startQueryMongoDB(self):
         from mongokit import Connection
         connection = Connection()
-        headers =  ("Index", "Value", "Type")
+        headers = ("Index", "Value", "Type")
         self.model = TreeModel(headers, connection)
         self.view.setModel(self.model)
         for column in range(self.model.columnCount()):

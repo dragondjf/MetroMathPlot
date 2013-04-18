@@ -8,16 +8,7 @@ from PyQt4 import QtCore
 from intermanager import InteractiveManager
 from effects import FaderWidget
 from childpage import ChildPage
-from navigationpage import NavigationPage
-from homepage import HomePage
-from systempage import SystemPage
-from datashowpage import DataShowPage
-from formpage import FormPage
-from viewpage import ViewPage
-from toolpage import ToolPage
-from productpage import ProductPage
-from helppage import HelpPage
-from aboutpage import AboutPage
+from childpages import *
 from guiutil import set_skin, set_bg
 
 
@@ -80,6 +71,10 @@ class MetroWindow(QtGui.QWidget):
             for item in buttons:
                 button = item + 'Button'
                 getattr(self, button).clicked.connect(self.childpageChange)
+
+        for button in ['Navigation', 'Back', 'Forward']:
+            b = getattr(getattr(self, 'childFormPage'), button + 'Button')
+            b.clicked.connect(getattr(self, 'FormPage').pauseHandler)
 
     def childpageChange(self):
         currentpage = getattr(self, unicode('child' + self.sender().text()) + 'Page')

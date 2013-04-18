@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui
 from PyQt4 import QtCore
+from guiutil import *
 
 
-class AboutPage(QtGui.QWidget):
+class SystemPage(QtGui.QWidget):
     def __init__(self, parent=None):
-        super(AboutPage, self).__init__(parent)
+        super(SystemPage, self).__init__(parent)
         self.parent = parent

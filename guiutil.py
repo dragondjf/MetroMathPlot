@@ -50,3 +50,187 @@ def movecenter(w):
     cp = QtGui.QDesktopWidget().availableGeometry().center()
     qr.moveCenter(cp)
     w.move(qr.topLeft())
+
+
+class QMessageBox(QtGui.QDialog):
+
+    def __init__(self, parent=None):
+        super(QMessageBox, self).__init__(parent)
+        self.setObjectName('QMessageBox')
+        self.setGeometry(300, 300, 400, 200)
+        self.center()
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowSystemMenuHint | QtCore.Qt.WindowMinimizeButtonHint)  # 无边框， 带系统菜单， 可以最小化
+        set_skin(self, os.sep.join(['skin', 'qss', 'MetroDialog.qss']))  # 设置弹出框样式
+        self.setWindowIcon(QtGui.QIcon('icons/Write.png'))
+        self.setModal(True)
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QtGui.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
+    def information(self, info):
+        infoButton = QtGui.QPushButton('info')
+        infoButton.setObjectName('Info' + 'Button')
+        info = QtGui.QTextEdit(info)
+        info.setReadOnly(True)
+        mainLayout = QtGui.QVBoxLayout()
+        mainLayout.addWidget(infoButton)
+        mainLayout.addWidget(info)
+        # mainLayout.addStretch(4)
+        infoButton.clicked.connect(self.clickReturn)
+        self.setLayout(mainLayout)
+        self.layout().setContentsMargins(0, 0, 0, 0)
+        self.exec_()
+
+    def clickReturn(self):
+        self.close()
+
+
+class QInputDialog(QtGui.QDialog):
+
+    def __init__(self, parent=None):
+        super(QInputDialog, self).__init__(parent)
+        self.setObjectName('QInputDialog')
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowSystemMenuHint | QtCore.Qt.WindowMinimizeButtonHint)  # 无边框， 带系统菜单， 可以最小化
+        set_skin(self, os.sep.join(['skin', 'qss', 'MetroDialog.qss']))  # 设置弹出框样式
+        self.setWindowIcon(QtGui.QIcon('icons/Write.png'))
+        self.setModal(True)
+        self.setGeometry(500, 600, 400, 100)
+        self.createNavigation()
+
+    def createNavigation(self):
+        buttons = ['Ok', 'Cancel']
+        self.navigation = QtGui.QWidget()
+        navigationLayout = QtGui.QHBoxLayout()
+        for item in buttons:
+            button = item + 'Button'
+            setattr(self, button, QtGui.QPushButton(item))
+            getattr(self, button).setObjectName(button)
+            navigationLayout.addWidget(getattr(self, button))
+        self.navigation.setLayout(navigationLayout)
+        # self.navigation.setMaximumHeight(10)
+        self.navigation.setContentsMargins(0, 0, 0, 0)
+
+        getattr(self, 'Cancel' + 'Button').clicked.connect(self.clickReturn)
+        getattr(self, 'Ok' + 'Button').clicked.connect(self.clickReturn)
+
+    def getInteger(self, title, intLabel, value, minvalue=-2147483647, maxvalue=2147483647, step=1):
+        titleLabel = QtGui.QLabel(title)
+        intLabel = QtGui.QLabel(intLabel)
+        intValue = QtGui.QSpinBox()
+        intValue.setMaximum(maxvalue)
+        intValue.setValue(value)
+        intValue.setMinimum(minvalue)
+        intValue.setSingleStep(step)
+        intValue.lineEdit().setReadOnly(False)
+
+        intwidget = QtGui.QWidget()
+        Layout = QtGui.QGridLayout()
+        Layout.addWidget(titleLabel, 0, 0)
+        Layout.addWidget(intLabel, 1, 0)
+        Layout.addWidget(intValue, 1, 1)
+        intwidget.setLayout(Layout)
+
+        mainLayout = QtGui.QVBoxLayout()
+        mainLayout.addWidget(intwidget)
+        mainLayout.addWidget(self.navigation)
+        self.setLayout(mainLayout)
+        self.layout().setContentsMargins(0, 0, 0, 0)
+        mainLayout.addStretch(1)
+
+        self.intValue = intValue
+        self.value = self.intValue.value()
+        self.flag = False
+
+        movecenter(self)
+        self.exec_()
+        return self.intValue.value(), self.flag
+
+    def getDouble(self, title, doubleLabel, value, minvalue=-2147483647, maxvalue=2147483647, step=1.0, decimals=5):
+        titleLabel = QtGui.QLabel(title)
+        doubleLabel = QtGui.QLabel(doubleLabel)
+        doubleValue = QtGui.QDoubleSpinBox()
+        doubleValue.setMaximum(maxvalue)
+        doubleValue.setValue(value)
+        doubleValue.setMinimum(minvalue)
+        doubleValue.setSingleStep(step)
+        doubleValue.setDecimals(decimals)
+        doubleValue.lineEdit().setReadOnly(False)
+
+        doublewidget = QtGui.QWidget()
+        Layout = QtGui.QGridLayout()
+        Layout.addWidget(titleLabel, 0, 0)
+        Layout.addWidget(doubleLabel, 1, 0)
+        Layout.addWidget(doubleValue, 1, 1)
+        doublewidget.setLayout(Layout)
+
+        mainLayout = QtGui.QVBoxLayout()
+        mainLayout.addWidget(doublewidget)
+        mainLayout.addWidget(self.navigation)
+        self.setLayout(mainLayout)
+        self.layout().setContentsMargins(0, 0, 0, 0)
+        mainLayout.addStretch(1)
+
+        self.doubleValue = doubleValue
+        self.exec_()
+        return self.doubleValue.value(), self.flag
+
+    def getText(self, title, textLabel, text, mode=QtGui.QLineEdit.Normal):
+        titleLabel = QtGui.QLabel(title)
+        textLabel = QtGui.QLabel(textLabel)
+        textValue = QtGui.QLineEdit(text)
+        textValue.setEchoMode(mode)
+
+        textwidget = QtGui.QWidget()
+        Layout = QtGui.QGridLayout()
+        Layout.addWidget(titleLabel, 0, 0)
+        Layout.addWidget(textLabel, 1, 0)
+        Layout.addWidget(textValue, 1, 1)
+        textwidget.setLayout(Layout)
+
+        mainLayout = QtGui.QVBoxLayout()
+        mainLayout.addWidget(textwidget)
+        mainLayout.addWidget(self.navigation)
+        self.setLayout(mainLayout)
+        self.layout().setContentsMargins(0, 0, 0, 0)
+        mainLayout.addStretch(1)
+
+        self.textValue = textValue
+        self.exec_()
+        return unicode(self.textValue.text()), self.flag
+
+    def getItem(self, title, itemLabel, items, index, editable=True):
+        titleLabel = QtGui.QLabel(title)
+        itemLabel = QtGui.QLabel(itemLabel)
+        itemValue = QtGui.QComboBox()
+        for item in items:
+            itemValue.addItem(item)
+        itemValue.setCurrentIndex(0)
+        itemValue.setEditable(editable)
+
+        itemwidget = QtGui.QWidget()
+        Layout = QtGui.QGridLayout()
+        Layout.addWidget(titleLabel, 0, 0)
+        Layout.addWidget(itemLabel, 1, 0)
+        Layout.addWidget(itemValue, 1, 1)
+        itemwidget.setLayout(Layout)
+
+        mainLayout = QtGui.QVBoxLayout()
+        mainLayout.addWidget(itemwidget)
+        mainLayout.addWidget(self.navigation)
+        self.setLayout(mainLayout)
+        self.layout().setContentsMargins(0, 0, 0, 0)
+        mainLayout.addStretch(1)
+
+        self.itemValue = itemValue
+        self.exec_()
+        return unicode(self.itemValue.currentText()), self.flag
+
+    def clickReturn(self):
+        self.close()
+        if self.sender() is getattr(self, 'Ok' + 'Button'):
+            self.flag = True
+        elif self.sender() is getattr(self, 'Cancel' + 'Button'):
+            self.flag = False
