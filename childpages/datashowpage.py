@@ -172,6 +172,7 @@ class WaveFigure(FigureWidget):
 
     @QtCore.pyqtSlot(dict)
     def settings(self, kargs):
+        print kargs
         self.settintparameter = kargs
         if 'wavpath' in kargs:
             self.wavfiles = util.FilenameFilter(util.path_match_platform(self.settintparameter['wavpath']))
@@ -232,11 +233,13 @@ class WaveFigure(FigureWidget):
             # print e
             pass
 
+
 class WaveThreadHandler(threading.Thread):
     def __init__(self, figure):
         threading.Thread.__init__(self)
         self.cmd_queue = Queue.Queue()
         self.figure = figure
+        self.addr = self.figure.settintparameter['addr']
         self.paid = self.figure.settintparameter['_id']
         self.featurevalueflags = self.figure.settintparameter['featurevalue']
         self.setDaemon(True)
@@ -244,7 +247,7 @@ class WaveThreadHandler(threading.Thread):
 
     def run(self):
         try:
-            ws = websocket.create_connection("ws://localhost:9000/waves/%s" % self.paid)
+            ws = websocket.create_connection("ws://%s/waves/%s" % (self.addr, self.paid))
             ws.send(json.dumps(self.featurevalueflags))
         except Exception, e:
             return
@@ -258,12 +261,11 @@ class WaveThreadHandler(threading.Thread):
                 else:
                     self.paid = self.figure.settintparameter['_id']
                     ws.close()
-                    ws = websocket.create_connection("ws://localhost:9000/waves/%s" % self.paid)
+                    ws = websocket.create_connection("ws://%s/waves/%s" % (self.addr, self.paid))
                 self.featurevalueflags = self.figure.settintparameter['featurevalue']
                 ws.send(json.dumps(self.featurevalueflags))
             except Queue.Empty:
                 pass
-
             showf = []
             for key in self.featurevalueflags:
                 if type(self.featurevalueflags[key]) is bool and self.featurevalueflags[key]:
@@ -289,7 +291,8 @@ class WaveProcessHandler(multiprocessing.Process):
 
     def run(self):
         try:
-            ws = websocket.create_connection("ws://localhost:9000/waves/%s" % self.paid)
+            ws = websocket.create_connection("ws://192.168.10.226:9000/waves/%s" % self.paid)
+            print ws
             ws.send(json.dumps(self.featurevalueflags))
         except Exception, e:
             return

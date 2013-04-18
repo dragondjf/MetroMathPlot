@@ -179,7 +179,7 @@ class FsWidget(QtGui.QWidget):
         self.PAlist = {}
         from mongokit import Connection
         try:
-            connection = Connection()
+            connection = Connection('192.168.10.226', 27017)
             for docment in connection['gsd']['PA_Col'].find():
                 self.PACombo.addItem(docment['gno'])
                 self.PAlist[docment['gno']] = str(docment['_id'])
@@ -350,7 +350,6 @@ class ConfigDialog(QtGui.QDialog):
         mainLayout.addLayout(horizontalLayout)
         self.setLayout(mainLayout)
 
-
     @QtCore.pyqtSlot()
     def save_settings(self):
         currentwidget = self.pagesWidget.currentWidget()
@@ -359,7 +358,11 @@ class ConfigDialog(QtGui.QDialog):
             for widget in self.fspage.children():
                 if isinstance(widget, FsWidget):
                     cupa = {}
-                    cupa['_id'] = widget.PAlist[unicode(widget.PACombo.currentText())]
+                    cupa['addr'] = str(widget.DBIPEdit.text())
+                    if hasattr(self, 'PAlist'):
+                        cupa['_id'] = widget.PAlist[unicode(widget.PACombo.currentText())]
+                    else:
+                        cupa['_id'] = None
                     cupa['featurevalue'] = {}
                     for checkbox in widget.featurevalueWidget.children():
                         if isinstance(checkbox, QtGui.QCheckBox):
