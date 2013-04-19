@@ -28,7 +28,8 @@ MetroMathPlot is an application based on PyQt4 with Metro style
 >>>>>解决方法：sudo apt-get install  libfreetype6-dev
 
 >>>><blod>3.<blod> src/backend_agg.cpp:3:17: fatal error: png.h: No such file or directory
->>>>>解决方法：sudo apt-get install libpng-dev
+>>>>>解决方法：sudo apt-get install libpng-dev  
+
 >>##### guiqwt安装
 >>cd guiqwt   
 >>python setup.py build_ext --fcompiler=gnu95 build install
