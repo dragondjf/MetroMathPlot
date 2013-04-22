@@ -31,11 +31,24 @@ MetroMathPlot is an application based on PyQt4 with Metro style
 >>>>>解决方法：sudo apt-get install libpng-dev  
 
 >>##### guiqwt安装
->>cd guiqwt   
->>python setup.py build_ext --fcompiler=gnu95 build install
 >> 参考<a>http://pythonhosted.org/guiqwt/installation.html#id1</a>  
 >>>注意：guiqwt依赖pyqwt，但linux的python-qt库中没有绑定这个库，需要额外安装，所以在装guiqwt后还需要进行如下操作:  
->>>sudo apt-get install  python-qwt5-qt4
+>>> sudo apt-get install build-essential ---<b>g++编译器</b>   
+>>> sudo apt-get install gfortran ---<b>gfortran 编译器</b>   
+>>> sudo apt-get install  python-qwt5-qt4 ---<b>python绑定的qwt5库</b>  
+>>> sudo pip install guidata  ---<b>guidata库</b>  
+>>> sudo pip install guiqwt  ---<b>guiqwt库</b>  
+>>> 如果安装不成功 可以参考<a>http://pythonhosted.org/guiqwt/installation.html#id1</a>  
+>>>cd guiqwt   
+>>>python setup.py build_ext --fcompiler=gnu95 build install  
+
+>>##### pyqtgraph安装
+>>>sudo pip install pyqtgraph  
+
+
+
+
+
 
 
 
