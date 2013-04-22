@@ -45,7 +45,7 @@ class FormPage(QtGui.QWidget):
         self.layout().setContentsMargins(0, 0, 10, 10)
 
         self.navigation_flag = True   # 导航标志，初始化时显示导航
-        set_skin(self, os.sep.join(['skin', 'qss', 'Metroform.qss']))
+        set_skin(self, os.sep.join(['skin', 'qss', 'MetroForm.qss']))
 
     def createLeftToolBar(self):
         navbutton = ['Start', 'Pause', 'Add', 'Show']
