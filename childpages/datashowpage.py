@@ -16,43 +16,48 @@ from guiutil import *
 from figurewidget import FigureWidget
 import configdialog
 import util
+from cache import padict
+
+
+timeinteral = 100
 
 
 class DataShowPage(QtGui.QWidget):
     def __init__(self, parent=None):
         super(DataShowPage, self).__init__(parent)
         self.parent = parent
-        self.splitter = QtGui.QSplitter()
-        self.splitter.setOrientation(QtCore.Qt.Horizontal)  # 设置分割窗口水平排列
-        self.splitter.setOpaqueResize(True)  # 设定分割窗的分割条在拖动时是否为实时更新显示，默认True表示实时更新
+        self.createLeftToolBar()
+        self.createTopToolBar()
 
-        self.createToolBar()
+        # self.manager = PlotManager(self)
 
-        self.splitter_figure = QtGui.QSplitter()
-        self.splitter_figure.setOrientation(QtCore.Qt.Vertical)
+        self.fvbox = QtGui.QVBoxLayout()
+        self.fvbox.addWidget(self.toptoolbar)
+
         i = 0
-        setattr(self, 'wavefigure%d' % i, WaveFigure('Figure%d' % i, point_num=300))
-        getattr(self, 'wavefigure%d' % i).setObjectName('WaveFigure%d' % i)
-        self.splitter_figure.addWidget(getattr(self, 'wavefigure%d' % i))
+        self.createPlotFig(i, self.fvbox)
 
-        self.splitter.addWidget(self.navigation)
-        self.splitter.addWidget(self.splitter_figure)
-        self.splitter.setSizes([self.width() / 4, self.width() * 3 / 4])  # 设置初始化时各个分割窗口的大小
-        self.splitter.setStretchFactor(1, 1)  # 设置编号为1的控件为可伸缩控件，第二个参数为表示自适应调整，大于0表示只有为编号为1的控件会自适应调整
+        if self.fvbox.count() <= 2:
+            index = self.fvbox.count() - 2
+            plotfig = getattr(self, 'plotfig%d' % index)
+            getattr(plotfig, 'HideButton').setEnabled(False)
 
         self.mainLayout = QtGui.QHBoxLayout()
-        self.mainLayout.addWidget(self.splitter)
+        self.mainLayout.addWidget(self.navigation)
+        self.mainLayout.addLayout(self.fvbox)
         self.setLayout(self.mainLayout)
+        self.layout().setContentsMargins(0, 0, 10, 10)
 
         self.navigation_flag = True   # 导航标志，初始化时显示导航
+        set_skin(self, os.sep.join(['skin', 'qss', 'Metroform.qss']))
 
-    def createToolBar(self):
-        navbutton = ['Start', 'Pause', 'Custom', 'Add']
+    def createLeftToolBar(self):
+        navbutton = ['Start', 'Pause', 'Add', 'Show']
         self.buttontext = {
             'Start': u'开始',
             'Pause': u'暂停',
-            'Custom': u'自定义',
-            'Add': u'增加'
+            'Add': u'增加',
+            'Show': u"显示"
         }
         self.navigation = QtGui.QWidget()
         navigationLayout = QtGui.QVBoxLayout()
@@ -63,175 +68,209 @@ class DataShowPage(QtGui.QWidget):
             getattr(self, button).setObjectName(button)
             navigationLayout.addWidget(getattr(self, button))
         self.navigation.setLayout(navigationLayout)
-        set_skin(self.navigation, os.sep.join(['skin', 'qss', 'MetroDataShow.qss']))
 
-        getattr(self, 'StartButton').clicked.connect(self.startploting)
-        getattr(self, 'PauseButton').clicked.connect(self.stopploting)
-        getattr(self, 'AddButton').clicked.connect(self.addFigure)
+        getattr(self, 'StartButton').clicked.connect(self.startHandler)
+        getattr(self, 'PauseButton').clicked.connect(self.pauseHandler)
+        getattr(self, 'AddButton').clicked.connect(self.addHandler)
+        getattr(self, 'ShowButton').clicked.connect(self.ShowHandler)
 
-    def startploting(self):
-        for i in xrange(self.splitter_figure.count()):
-            setattr(getattr(self, 'wavefigure%d' % i), 'plotflag', True)
+    def createTopToolBar(self):
+        toolbar = QtGui.QToolBar()
+        toolbar.setObjectName("PlotToolBar")
+        self.point_numLabel = QtGui.QLabel(u"显示波形点数")
+        self.xrange_box = QtGui.QSpinBox()
+        self.xrange_box.setMinimum(1)
+        self.xrange_box.setMaximum(4096)
+        self.xrange_box.setSingleStep(300)
+        self.xrange_box.setValue(300)
+        toolbar.addWidget(self.point_numLabel)
+        toolbar.addWidget(self.xrange_box)
 
-    @QtCore.pyqtSlot()
-    def stopploting(self):
-        for i in xrange(self.splitter_figure.count()):
-            setattr(getattr(self, 'wavefigure%d' % i), 'plotflag', False)
+        self.xrange_box.valueChanged.connect(self.pointchange)
 
-    def addFigure(self):
-        i = self.splitter_figure.count()
-        setattr(self, 'wavefigure%d' % i, WaveFigure('Figure%d' % i, point_num=300))
-        getattr(self, 'wavefigure%d' % i).setObjectName('wavefigure%d' % i)
-        self.splitter_figure.addWidget(getattr(self, 'wavefigure%d' % i))
-        self.emit(QtCore.SIGNAL('send(int)'), i)
+        self.toptoolbar = toolbar
+
+    def startHandler(self):
+        for index in range(self.fvbox.count() - 1):
+            plotfig = getattr(self, 'plotfig%d' % index)
+            plotfig.startHandler()
+
+        getattr(self, 'StartButton').setEnabled(False)
+        getattr(self, 'PauseButton').setEnabled(True)
+
+    def pauseHandler(self):
+        for index in range(self.fvbox.count() - 1):
+            plotfig = getattr(self, 'plotfig%d' % index)
+            plotfig.pauseHandler()
+
+        getattr(self, 'StartButton').setEnabled(True)
+        getattr(self, 'PauseButton').setEnabled(False)
+
+    def addHandler(self):
+        i = self.fvbox.count() - 1
+        self.createPlotFig(i, self.fvbox)
+
+        for index in range(self.fvbox.count() - 1):
+            plotfig = getattr(self, 'plotfig%d' % index)
+            getattr(plotfig, 'HideButton').setEnabled(True)
+        if i == 3:
+            getattr(self, 'AddButton').setEnabled(False)
+
+    def ShowHandler(self):
+        for index in range(self.fvbox.count() - 1):
+            plotfig = getattr(self, 'plotfig%d' % index)
+            if not plotfig.isVisible():
+                plotfig.setVisible(True)
+                plotfig.timer = plotfig.startTimer(timeinteral)
+
+    def createPlotFig(self, index, fvbox):
+        setattr(self, 'plotfig%d' % index, WaveFigure(point_num=self.xrange_box.value()))
+        plot = getattr(self, 'plotfig%d' % index)
+        plot.setObjectName('WaveMatPlotLibFigure%d' % index)
+        fvbox.addWidget(plot)
+
+    def pointchange(self, i):
+        for index in range(self.fvbox.count() - 1):
+            plotfig = getattr(self, 'plotfig%d' % index)
+            plotfig.point_num = i
 
 
-class WaveFigure(FigureWidget):
-    def __init__(self, title, point_num=300):
-        super(WaveFigure, self).__init__(title, [], [])
-        # self.title = title
-        self.plotflag = True
-        # 与右键有关的初始化设置
-        self.point_num = point_num   # 默认显示点数
-        self.pauseflag = False  # 默认不暂停
+class PlotWidget(QtGui.QWidget):
+    """
+    Filter testing widget
+    parent: parent widget (QWidget)
+    x, y: NumPy arrays
+    func: function object (the signal filter to be tested)
+    """
+    def __init__(self, parent=None, x=[], y=[], func=None, point_num=300):
+        super(PlotWidget, self).__init__(parent)
+        self.x = x
+        self.y = y
+        self.func = func
+        #---guiqwt curve item attribute:
+        self.curve_item = None
+
+        self.point_num = point_num
+        self.setup_widget()
+
+    def setup_widget(self):
+        #---Create the plot widget:
+        self.createPlotCurve()
+        self.createCtrlWidget()
+
+        vlayout = QtGui.QHBoxLayout()
+        vlayout.addWidget(self.curvewidget)
+        vlayout.addWidget(self.ctrlwidget)
+        self.setLayout(vlayout)
+
+    def createPlotCurve(self):
+        curvewidget = FigureWidget(self)
+        self.curvewidget = curvewidget
+
+    def createCtrlWidget(self):
+        self.ctrlbuttons = [['DataSource', 'Hide'], ['Start', 'Pause']]
+        self.buttontext = {
+            'DataSource': u"数据\n来源",
+            'Start': u'开始',
+            'Pause': u'暂停',
+            'Hide': u'隐藏',
+        }
+        self.ctrlwidget = QtGui.QWidget()
+        navigationLayout = QtGui.QGridLayout()
+
+        for buttons in self.ctrlbuttons:
+            for item in buttons:
+                button = item + 'Button'
+                setattr(self, button, QtGui.QPushButton(self.buttontext[item]))
+                getattr(self, button).setObjectName('Plot%s' % button)
+                navigationLayout.addWidget(getattr(self, button), self.ctrlbuttons.index(buttons), buttons.index(item))
+
+        self.ctrlwidget.setLayout(navigationLayout)
+        getattr(self, 'StartButton').setEnabled(False)
+        getattr(self, 'PauseButton').setEnabled(False)
+        set_skin(self.ctrlwidget, os.sep.join(['skin', 'qss', 'MetroGuiQwtPlot.qss']))
+
+
+class WaveFigure(PlotWidget):
+    def __init__(self, point_num=300):
+        super(WaveFigure, self).__init__(point_num=point_num)
 
         configdlg = configdialog.ConfigDialog()
         self.settingdialog = configdialog.ChildDialog(None, configdlg)
         QtCore.QObject.connect(getattr(self.settingdialog, 'Ok' + 'Button'), QtCore.SIGNAL('clicked()'), configdlg, QtCore.SLOT('save_settings()'))  # 点击弹出窗口OkButton，执行保存参数函数
         QtCore.QObject.connect(self.settingdialog.child, QtCore.SIGNAL('send(PyQt_PyObject)'), self, QtCore.SLOT('settings(PyQt_PyObject)'))  # 交互管理窗口获取保存的配置
 
-    @QtCore.pyqtSlot(list)
+        getattr(self, 'DataSourceButton').clicked.connect(self.datafromHandler)
+        getattr(self, 'HideButton').clicked.connect(self.hideHandler)
+        getattr(self, 'StartButton').clicked.connect(self.startHandler)
+        getattr(self, 'PauseButton').clicked.connect(self.pauseHandler)
+
     def startwork(self, padata, showf):
-        try:
-            if self.plotflag:
-                self.ax.clear()
-                if 'gno' in self.settintparameter:
-                    self.ax.set_title(self.settintparameter['gno'])
-                for item in showf:
-                    if len(showf) == 1:
-                        color = ['r']
-                    elif len(showf) == 2:
-                        color = ['r', 'b']
-                    elif len(showf) == 3:
-                        color = ['r', 'g', 'b']
-                    self.ax.plot(padata[item][-self.point_num:], color=color[showf.index(item)])
-                self.fig.canvas.draw()
-        except Exception, e:
-            pass
-
-    def createContextMenu(self):
-        '''
-        创建右键菜单
-        '''
-        # 必须将ContextMenuPolicy设置为Qt.CustomContextMenu
-        # 否则无法使用customContextMenuRequested信号
-        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.showContextMenu)
-
-        # 创建QMenu
-        self.contextMenu = QtGui.QMenu(self)
-        style_QMenu1 = "QMenu {background-color: #ABABAB; border: 1px solid black;}"
-        style_QMenu2 = "QMenu::item {background-color: transparent;}"
-        style_QMenu3 = "QMenu::item:selected { /* when user selects item using mouse or keyboard */background-color: #654321;}"
-        style_QMenu = QtCore.QString(style_QMenu1 + style_QMenu2 + style_QMenu3)
-        self.contextMenu.setStyleSheet(style_QMenu)
-
-        self.action_datafrom = self.contextMenu.addAction(u'选择数据来源')
-        self.action_pointnum = self.contextMenu.addAction(u'设置数据显示点数')
-        self.action_pause = self.contextMenu.addAction(u'暂停')
-        self.action_NavigationToolbar = self.contextMenu.addAction(u'显示绘图导航')
-        self.action_delete = self.contextMenu.addAction(u'删除此图')
-        # 将动作与处理函数相关联
-        # 这里为了简单，将所有action与同一个处理函数相关联
-        # 当然也可以将他们分别与不同函数关联，实现不同的功能
-        self.action_datafrom.triggered.connect(self.datafromHandler)
-        self.action_pointnum.triggered.connect(self.pointnumHandler)
-        self.action_pause.triggered.connect(self.pauseHandler)
-        self.action_NavigationToolbar.triggered.connect(self.NavigationToolbarHandler)
-        self.action_delete.triggered.connect(self.deleteHandler)
-
-    def showContextMenu(self, pos):
-        '''
-        右键点击时调用的函数
-        '''
-        # 菜单显示前，将它移动到鼠标点击的位置
-        coursePoint = QtGui.QCursor.pos()  # 获取当前光标的位置
-        self.contextMenu.move(coursePoint)
-        self.contextMenu.show()
+        self.curvewidget.ax.clear()
+        for key in showf:
+            if len(showf) == 1:
+                color = ['r']
+            elif len(showf) == 2:
+                color = ['r', 'b']
+            elif len(showf) == 3:
+                color = ['r', 'g', 'b']
+            self.curvewidget.ax.plot(padata[key][-self.point_num:], color=color[showf.index(key)])
+        self.curvewidget.fig.canvas.draw()
 
     def datafromHandler(self):
         self.setdialogshow(self.objectName())
 
     def setdialogshow(self, objectname):
         self.settingdialog.child.boundfig(str(objectname))
-        mainwindow = self.parent().parent().parent().parent.parent()
+        mainwindow = self.parent().parent
         self.settingdialog.setGeometry(mainwindow.geometry())
         movecenter(self.settingdialog)
         self.settingdialog.show()
         self.settingdialog.fadeInWidget()
 
+    def hideHandler(self):
+        self.setVisible(False)
+        if hasattr(self, 'timer'):
+            self.killTimer(self.timer)
+
+    def startHandler(self):
+        getattr(self, 'StartButton').setEnabled(False)
+        getattr(self, 'PauseButton').setEnabled(True)
+        self.timer = self.startTimer(timeinteral)
+
+    def pauseHandler(self):
+        if hasattr(self, 'timer'):
+            self.killTimer(self.timer)
+        getattr(self, 'PauseButton').setEnabled(False)
+        getattr(self, 'StartButton').setEnabled(True)
+
     @QtCore.pyqtSlot(dict)
     def settings(self, kargs):
-        print kargs
         self.settintparameter = kargs
         if 'wavpath' in kargs:
             self.wavfiles = util.FilenameFilter(util.path_match_platform(self.settintparameter['wavpath']))
             if not hasattr(self, 'datahandler'):
-                self.datahandler = WaveReplayHandler(self, self.wavfiles)
-            else:
-                self.datahandler.cmd_queue.put_nowait(self.settintparameter)
-
+                self.datahandler = WaveReplayHandler(self.objectName(), self.wavfiles, self.settintparameter['importwavspreed'])
         else:
             if not hasattr(self, 'datahandler'):
                 self.datahandler = WaveThreadHandler(self)
-            else:
-                self.datahandler.cmd_queue.put_nowait(self.settintparameter)
 
-    def pointnumHandler(self):
-        '''
-        设置数据显示点数
-        '''
-        self.input_dialog = QInputDialog()
-        i, ok = self.input_dialog.getInteger(u"设置数据点数", "number:", self.point_num, 1, 4096, 300)
-        if ok:
-            self.point_num = i
-        # print self.point_num
-
-    def pauseHandler(self):
-        '''
-        暂停和启动波形
-        '''
-        if not self.pauseflag:
-            self.action_pause.setText(u'启动')
-            self.emit(QtCore.SIGNAL('datag(bool)'), self.pauseflag)
-            self.pauseflag = True
+        if 'featurevalue' in self.settintparameter:
+            showf = []
+            flags = self.settintparameter['featurevalue']
+            for key in flags:
+                    if type(flags[key]) is bool and flags[key]:
+                        showf.append(key)
+            self.showf = showf
         else:
-            self.action_pause.setText(u'暂停')
-            self.emit(QtCore.SIGNAL('datag(bool)'), self.pauseflag)
-            self.pauseflag = False
+            self.showf = ['max', 'min']
+        getattr(self, 'StartButton').setEnabled(True)
 
-    def NavigationToolbarHandler(self):
-        '''
-        导航工具条显示与隐藏
-        '''
-        if self.mpl_toolbar.isVisible():
-            self.action_NavigationToolbar.setText(u'显示绘图导航')
-            self.mpl_toolbar.setVisible(False)
+    def timerEvent(self, event):
+        if self.objectName() in padict:
+            self.startwork(padict[self.objectName()], self.showf)
         else:
-            self.action_NavigationToolbar.setText(u'隐藏绘图导航')
-            self.mpl_toolbar.setVisible(True)
-
-    def deleteHandler(self):
-        '''
-        删除此绘图控件
-        '''
-        if hasattr(self, 'timer'):
             self.killTimer(self.timer)
-        try:
-            self.deleteLater()
-        except Exception, e:
-            # print e
-            pass
 
 
 class WaveThreadHandler(threading.Thread):
@@ -313,12 +352,12 @@ class WaveProcessHandler(multiprocessing.Process):
 
 
 class WaveReplayHandler(threading.Thread):
-    def __init__(self, figure, wavfiles):
+    def __init__(self, figurename, wavfiles, importspreed):
         threading.Thread.__init__(self)
-        self.cmd_queue = Queue.Queue()
-        self.figure = figure
+        self.figurename = figurename
         self.wavfiles = wavfiles
-        self.importwavspreed = 0.1
+        self.importspreed = importspreed
+        self.importwavspreed = 0.2
         self.setDaemon(True)
         self.start()
 
@@ -326,10 +365,6 @@ class WaveReplayHandler(threading.Thread):
         import algorithm
         padata = algorithm.creat_data(algorithm.Names)
         while True:
-            try:
-                self.figure.settintparameter = self.cmd_queue.get_nowait()
-            except Queue.Empty:
-                pass
             if hasattr(self, 'wavfiles'):
                 for wavfile in self.wavfiles:
                     x, fs, bits, N = util.wavread(unicode(wavfile))
@@ -340,5 +375,5 @@ class WaveReplayHandler(threading.Thread):
                         raw_data = self.x[1024 * (i - 1):1024 * i]
                         padata['max'][-1] = max(raw_data)
                         padata['min'][-1] = min(raw_data)
-                        self.figure.startwork(padata, ['max', 'min'])
-                        time.sleep(self.importwavspreed / self.figure.settintparameter['importwavspreed'])
+                        padict.update({self.figurename: padata})
+                        time.sleep(self.importwavspreed / self.importspreed)

@@ -9,33 +9,10 @@ QToolBar#PlotToolBar{
 QSpinBox{
 	width: 100px;
 }
-QPushButton {
-    background: green;
-    border: none;
-}
 
-
-QPushButton:hover, QPushButton:pressed , QPushButton:checked, QPushButton:focus
-{
-	background-color: rgb(85, 170, 255);
-	text-align: center;
-	font-weight:100
-}
-
-QPushButton:hover
-{
-	background-repeat:no-repeat;
-	background-position: center left;
-}
 
 QPushButton:disabled{
 	background-color: rgb(200, 200, 200);
-}
-
-QPushButton:pressed, QPushButton:checked
-{
-	background-repeat:no-repeat;
-	background-position: center right;
 }
 
 

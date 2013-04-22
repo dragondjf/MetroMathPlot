@@ -11,15 +11,16 @@ from matplotlib.figure import Figure
 class FigureWidget(QtGui.QWidget):
     """Matplotlib Figure widget to display CPU utilization"""
 
-    def __init__(self, title="Figrue", point_num=300, x=[], y=[]):
+    def __init__(self, parent=None, title="Figrue", point_num=300, x=[], y=[]):
         # save the current CPU info (used by updating algorithm)R
-        super(FigureWidget, self).__init__()
+        super(FigureWidget, self).__init__(parent)
 
         # 数据初始化
         self.x = x
         self.y = y
         # 绘图控件初始化
         self.fig = Figure()
+        self.fig.set_figwidth(1000)
         self.canvas = FigureCanvas(self.fig)
         self.canvas.setParent(self)
         self.mpl_toolbar = NavigationToolbar(self.canvas, self)
@@ -33,7 +34,7 @@ class FigureWidget(QtGui.QWidget):
         self.setLayout(vbox)
 
         # 创建右键菜单
-        self.createContextMenu()
+        # self.createContextMenu()
 
         # 设置子图属性
         self.ax = self.fig.add_subplot(111)

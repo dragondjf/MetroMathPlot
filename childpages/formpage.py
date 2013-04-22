@@ -4,10 +4,6 @@ import os
 from PyQt4 import QtGui
 from PyQt4 import QtCore
 
-from array import array
-from math import sin, cos
-import numpy as np
-from guiqwt.plot import PlotManager, CurvePlot
 from guiqwt.plot import CurveWidget
 from guiqwt.builder import make
 import guiqwt
@@ -16,10 +12,9 @@ from guiutil import *
 import util
 import configdialog
 from datashowpage import WaveReplayHandler, WaveThreadHandler
+from cache import padict
 
-PLOT_DEFINE = [[u"sin1f", u"cos1f"], [u"sin3f", u"cos3f"], [u"sin合成", u"cos合成"]]
-COLORS = ["blue", "red"]
-DT = 0.001
+timeinteral = 10
 
 
 class FormPage(QtGui.QWidget):
@@ -122,12 +117,12 @@ class FormPage(QtGui.QWidget):
             plotfig = getattr(self, 'plotfig%d' % index)
             if not plotfig.isVisible():
                 plotfig.setVisible(True)
-                plotfig.timer = plotfig.startTimer(200)
+                plotfig.timer = plotfig.startTimer(timeinteral)
 
     def createPlotFig(self, index, fvbox):
         setattr(self, 'plotfig%d' % index, WaveFigure(point_num=self.xrange_box.value()))
         plot = getattr(self, 'plotfig%d' % index)
-        plot.setObjectName('WaveFigure%d' % index)
+        plot.setObjectName('WaveGuiQwtFigure%d' % index)
         fvbox.addWidget(plot)
 
     def pointchange(self, i):
@@ -243,7 +238,7 @@ class WaveFigure(PlotWidget):
     def startHandler(self):
         getattr(self, 'StartButton').setEnabled(False)
         getattr(self, 'PauseButton').setEnabled(True)
-        self.timer = self.startTimer(200)
+        self.timer = self.startTimer(timeinteral)
 
     def pauseHandler(self):
         if hasattr(self, 'timer'):
@@ -257,19 +252,28 @@ class WaveFigure(PlotWidget):
         if 'wavpath' in kargs:
             self.wavfiles = util.FilenameFilter(util.path_match_platform(self.settintparameter['wavpath']))
             if not hasattr(self, 'datahandler'):
-                self.datahandler = WaveReplayHandler(self, self.wavfiles)
-            else:
-                self.datahandler.cmd_queue.put_nowait(self.settintparameter)
-
+                self.datahandler = WaveReplayHandler(self.objectName(), self.wavfiles, self.settintparameter['importwavspreed'])
         else:
             if not hasattr(self, 'datahandler'):
                 self.datahandler = WaveThreadHandler(self)
-            else:
-                self.datahandler.cmd_queue.put_nowait(self.settintparameter)
+
+        if 'featurevalue' in self.settintparameter:
+            showf = []
+            flags = self.settintparameter['featurevalue']
+            for key in flags:
+                    if type(flags[key]) is bool and flags[key]:
+                        showf.append(key)
+            self.showf = showf
+        else:
+            self.showf = ['max', 'min']
 
         getattr(self, 'StartButton').setEnabled(True)
 
     def timerEvent(self, event):
-        for item in self.curvewidget.plot.get_items():
-            if isinstance(item, guiqwt.curve.CurveItem):
-                item.plot().do_autoscale()
+        if self.objectName() in padict:
+            self.startwork(padict[self.objectName()], self.showf)
+            for item in self.curvewidget.plot.get_items():
+                if isinstance(item, guiqwt.curve.CurveItem):
+                    item.plot().do_autoscale()
+        else:
+            self.killTimer(self.timer)
