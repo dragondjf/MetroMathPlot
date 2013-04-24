@@ -46,7 +46,7 @@ class DataShowPage(QtGui.QWidget):
         self.layout().setContentsMargins(0, 0, 10, 10)
 
         self.navigation_flag = True   # 导航标志，初始化时显示导航
-        set_skin(self, os.sep.join(['skin', 'qss', 'MetroPlotItemRightControl.qss']))
+        set_skin(self, os.sep.join(['skin', 'qss', 'MetroPlotItemLeftControl.qss']))
 
     def createLeftToolBar(self):
         navbutton = ['Start', 'Pause', 'Add', 'Show']
@@ -186,7 +186,7 @@ class PlotWidget(QtGui.QWidget):
         self.ctrlwidget.setLayout(navigationLayout)
         getattr(self, 'StartButton').setEnabled(False)
         getattr(self, 'PauseButton').setEnabled(False)
-        set_skin(self.ctrlwidget, os.sep.join(['skin', 'qss', 'MetroPlotLeftControl.qss']))
+        set_skin(self.ctrlwidget, os.sep.join(['skin', 'qss', 'MetroPlotRightControl.qss']))
 
 
 class WaveFigure(PlotWidget):

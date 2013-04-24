@@ -52,7 +52,6 @@ class MetroWindow(QtGui.QWidget):
                 buttonLayout.addWidget(getattr(self, button), self.MetroButtons.index(buttons), buttons.index(item))
 
         self.buttonLayout = buttonLayout
-        set_skin(self, os.sep.join(['skin', 'qss', 'MetroNavigation.qss']))
 
         self.navigationPage.setLayout(buttonLayout)
 
@@ -124,7 +123,8 @@ class MainWindow(QtGui.QMainWindow):
         self.setMinimumSize(800, 600)
         self.setWindowTitle('Math Plot')
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        set_skin(self, os.sep.join(['skin', 'qss', 'MetroMainwindow.qss']))  # 设置背景图
+
+        self.setskin()
 
         self.fullscreenflag = False  # 初始化时非窗口最大话标志
         self.navigation_flag = True   # 导航标志，初始化时显示导航
@@ -134,6 +134,11 @@ class MainWindow(QtGui.QMainWindow):
         # self.setWindowFlags(QtCore.Qt.FramelessWindowHint)  # 隐藏标题栏， 无法改变大小
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowSystemMenuHint | QtCore.Qt.WindowMinimizeButtonHint)  # 无边框， 带系统菜单， 可以最小化
         # self.setMouseTracking(True)
+
+    def setskin(self):
+        set_skin(self, os.sep.join(['skin', 'qss', 'MetroMainwindow.qss']))  # 设置背景图
+        set_skin(self.centeralwindow, os.sep.join(['skin', 'qss', 'MetroNavigation.qss']))
+        
 
     def set_background(self, bg=None):
         set_bg(self, bg)
