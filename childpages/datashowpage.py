@@ -5,19 +5,14 @@ import os
 from PyQt4 import QtGui
 from PyQt4 import QtCore
 
-import threading
-import multiprocessing
-import Queue
-import time
-import websocket
-import json
 
 from guiutil import *
 from figurewidget import FigureWidget
 import configdialog
-import util
-from cache import padict
 
+from appserver.wavehandler import WaveReplayHandler, WaveThreadHandler
+from cache import padict
+import util
 
 timeinteral = 100
 
@@ -33,6 +28,7 @@ class DataShowPage(QtGui.QWidget):
 
         self.fvbox = QtGui.QVBoxLayout()
         self.fvbox.addWidget(self.toptoolbar)
+        self.fvbox.setContentsMargins(0, 0, 0, 0)
 
         i = 0
         self.createPlotFig(i, self.fvbox)
@@ -45,11 +41,12 @@ class DataShowPage(QtGui.QWidget):
         self.mainLayout = QtGui.QHBoxLayout()
         self.mainLayout.addWidget(self.navigation)
         self.mainLayout.addLayout(self.fvbox)
+        self.mainLayout.addStretch(1)
         self.setLayout(self.mainLayout)
         self.layout().setContentsMargins(0, 0, 10, 10)
 
         self.navigation_flag = True   # 导航标志，初始化时显示导航
-        set_skin(self, os.sep.join(['skin', 'qss', 'MetroForm.qss']))
+        set_skin(self, os.sep.join(['skin', 'qss', 'MetroPlotItemRightControl.qss']))
 
     def createLeftToolBar(self):
         navbutton = ['Start', 'Pause', 'Add', 'Show']
@@ -127,7 +124,7 @@ class DataShowPage(QtGui.QWidget):
         setattr(self, 'plotfig%d' % index, WaveFigure(point_num=self.xrange_box.value()))
         plot = getattr(self, 'plotfig%d' % index)
         plot.setObjectName('WaveMatPlotLibFigure%d' % index)
-        fvbox.addWidget(plot)
+        fvbox.addWidget(plot, stretch=1)
 
     def pointchange(self, i):
         for index in range(self.fvbox.count() - 1):
@@ -162,6 +159,7 @@ class PlotWidget(QtGui.QWidget):
         vlayout.addWidget(self.curvewidget)
         vlayout.addWidget(self.ctrlwidget)
         self.setLayout(vlayout)
+        self.layout().setContentsMargins(0, 0, 0, 0)
 
     def createPlotCurve(self):
         curvewidget = FigureWidget(self)
@@ -188,7 +186,7 @@ class PlotWidget(QtGui.QWidget):
         self.ctrlwidget.setLayout(navigationLayout)
         getattr(self, 'StartButton').setEnabled(False)
         getattr(self, 'PauseButton').setEnabled(False)
-        set_skin(self.ctrlwidget, os.sep.join(['skin', 'qss', 'MetroGuiQwtPlot.qss']))
+        set_skin(self.ctrlwidget, os.sep.join(['skin', 'qss', 'MetroPlotLeftControl.qss']))
 
 
 class WaveFigure(PlotWidget):
@@ -253,7 +251,7 @@ class WaveFigure(PlotWidget):
                 self.datahandler = WaveReplayHandler(self.objectName(), self.wavfiles, self.settintparameter['importwavspreed'])
         else:
             if not hasattr(self, 'datahandler'):
-                self.datahandler = WaveThreadHandler(self)
+                self.datahandler = WaveThreadHandler(self.objectName(), self.settintparameter)
 
         if 'featurevalue' in self.settintparameter:
             showf = []
@@ -271,109 +269,3 @@ class WaveFigure(PlotWidget):
             self.startwork(padict[self.objectName()], self.showf)
         else:
             self.killTimer(self.timer)
-
-
-class WaveThreadHandler(threading.Thread):
-    def __init__(self, figure):
-        threading.Thread.__init__(self)
-        self.cmd_queue = Queue.Queue()
-        self.figure = figure
-        self.addr = self.figure.settintparameter['addr']
-        self.paid = self.figure.settintparameter['_id']
-        self.featurevalueflags = self.figure.settintparameter['featurevalue']
-        self.setDaemon(True)
-        self.start()
-
-    def run(self):
-        try:
-            ws = websocket.create_connection("ws://%s/waves/%s" % (self.addr, self.paid))
-            ws.send(json.dumps(self.featurevalueflags))
-        except Exception, e:
-            return
-        import algorithm
-        padata = algorithm.creat_data(algorithm.Names)
-        while True:
-            try:
-                self.figure.settintparameter = self.cmd_queue.get_nowait()
-                if self.paid == self.figure.settintparameter['_id']:
-                    pass
-                else:
-                    self.paid = self.figure.settintparameter['_id']
-                    ws.close()
-                    ws = websocket.create_connection("ws://%s/waves/%s" % (self.addr, self.paid))
-                self.featurevalueflags = self.figure.settintparameter['featurevalue']
-                ws.send(json.dumps(self.featurevalueflags))
-            except Queue.Empty:
-                pass
-            showf = []
-            for key in self.featurevalueflags:
-                if type(self.featurevalueflags[key]) is bool and self.featurevalueflags[key]:
-                    showf.append(key)
-
-            result = json.loads(ws.recv())
-            for item in result:
-                for key in padata.keys():
-                    padata[key][:-1] = padata[key][1:]
-                for key in item:
-                    padata[key][-1] = item[key]
-            self.figure.startwork(padata, showf)
-
-
-class WaveProcessHandler(multiprocessing.Process):
-    def __init__(self, figure):
-        multiprocessing.Process.__init__(self)
-        self.figure = figure
-        self.paid = self.figure.settintparameter['_id']
-        self.featurevalueflags = self.figure.settintparameter['featurevalue']
-        # self.setDaemon(True)
-        self.start()
-
-    def run(self):
-        try:
-            ws = websocket.create_connection("ws://192.168.10.226:9000/waves/%s" % self.paid)
-            print ws
-            ws.send(json.dumps(self.featurevalueflags))
-        except Exception, e:
-            return
-        import algorithm
-        padata = algorithm.creat_data(algorithm.Names)
-        while True:
-            showf = []
-            for key in self.featurevalueflags:
-                if type(self.featurevalueflags[key]) is bool and self.featurevalueflags[key]:
-                    showf.append(key)
-            result = json.loads(ws.recv())
-            for item in result:
-                for key in padata.keys():
-                    padata[key][:-1] = padata[key][1:]
-                for key in item:
-                    padata[key][-1] = item[key]
-            self.figure.startwork(padata, showf)
-
-
-class WaveReplayHandler(threading.Thread):
-    def __init__(self, figurename, wavfiles, importspreed):
-        threading.Thread.__init__(self)
-        self.figurename = figurename
-        self.wavfiles = wavfiles
-        self.importspreed = importspreed
-        self.importwavspreed = 0.2
-        self.setDaemon(True)
-        self.start()
-
-    def run(self):
-        import algorithm
-        padata = algorithm.creat_data(algorithm.Names)
-        while True:
-            if hasattr(self, 'wavfiles'):
-                for wavfile in self.wavfiles:
-                    x, fs, bits, N = util.wavread(unicode(wavfile))
-                    self.x = (x + 32768) / 16
-                    for i in range(1, len(x) / 1024):
-                        for key in padata:
-                            padata[key][:-1] = padata[key][1:]
-                        raw_data = self.x[1024 * (i - 1):1024 * i]
-                        padata['max'][-1] = max(raw_data)
-                        padata['min'][-1] = min(raw_data)
-                        padict.update({self.figurename: padata})
-                        time.sleep(self.importwavspreed / self.importspreed)

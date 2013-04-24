@@ -11,10 +11,10 @@ import guiqwt
 from guiutil import *
 import util
 import configdialog
-from datashowpage import WaveReplayHandler, WaveThreadHandler
+from appserver.wavehandler import WaveReplayHandler, WaveThreadHandler
 from cache import padict
 
-timeinteral = 10
+timeinteral = 100
 
 
 class FormPage(QtGui.QWidget):
@@ -45,7 +45,7 @@ class FormPage(QtGui.QWidget):
         self.layout().setContentsMargins(0, 0, 10, 10)
 
         self.navigation_flag = True   # 导航标志，初始化时显示导航
-        set_skin(self, os.sep.join(['skin', 'qss', 'MetroForm.qss']))
+        set_skin(self, os.sep.join(['skin', 'qss', 'MetroPlotItemRightControl.qss']))
 
     def createLeftToolBar(self):
         navbutton = ['Start', 'Pause', 'Add', 'Show']
@@ -187,7 +187,7 @@ class PlotWidget(QtGui.QWidget):
         self.ctrlwidget.setLayout(navigationLayout)
         getattr(self, 'StartButton').setEnabled(False)
         getattr(self, 'PauseButton').setEnabled(False)
-        set_skin(self.ctrlwidget, os.sep.join(['skin', 'qss', 'MetroGuiQwtPlot.qss']))
+        set_skin(self.ctrlwidget, os.sep.join(['skin', 'qss', 'MetroPlotLeftControl.qss']))
 
 
 class WaveFigure(PlotWidget):
@@ -255,7 +255,7 @@ class WaveFigure(PlotWidget):
                 self.datahandler = WaveReplayHandler(self.objectName(), self.wavfiles, self.settintparameter['importwavspreed'])
         else:
             if not hasattr(self, 'datahandler'):
-                self.datahandler = WaveThreadHandler(self)
+                self.datahandler = WaveThreadHandler(self.objectName(), self.settintparameter)
 
         if 'featurevalue' in self.settintparameter:
             showf = []

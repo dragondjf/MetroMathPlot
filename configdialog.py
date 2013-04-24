@@ -122,6 +122,9 @@ class FsWidget(QtGui.QWidget):
     def __init__(self, parent=None):
         super(FsWidget, self).__init__(parent)
         fsGroup = QtGui.QGroupBox(u"实时波形设置")
+        AppIpLable = QtGui.QLabel(u"数据库（Ip:Port）")
+        self.AppIPEdit = QtGui.QLineEdit(u"127.0.0.1:9000")
+
         DBIpLable = QtGui.QLabel(u"数据库（Ip:Port）")
         self.DBIPEdit = QtGui.QLineEdit(u"127.0.0.1:27017")
         DBButton = QtGui.QPushButton(u"查询数据库")
@@ -145,14 +148,17 @@ class FsWidget(QtGui.QWidget):
         self.pointnumberEdit = pointnumberEdit
 
         fsLayout = QtGui.QGridLayout()
-        fsLayout.addWidget(DBIpLable, 0, 0)
-        fsLayout.addLayout(DBGrid, 0, 1)
-        fsLayout.addWidget(PALabel, 1, 0)
-        fsLayout.addWidget(self.PACombo, 1, 1)
-        fsLayout.addWidget(featurevalueLabel, 2, 0)
-        fsLayout.addWidget(self.featurevalueWidget, 2, 1)
-        fsLayout.addWidget(pointnumberLabel, 3, 0)
-        fsLayout.addWidget(self.pointnumberEdit, 3, 1)
+
+        fsLayout.addWidget(AppIpLable, 0, 0)
+        fsLayout.addWidget(self.AppIPEdit, 0, 1)
+        fsLayout.addWidget(DBIpLable, 1, 0)
+        fsLayout.addLayout(DBGrid, 1, 1)
+        fsLayout.addWidget(PALabel, 2, 0)
+        fsLayout.addWidget(self.PACombo, 2, 1)
+        fsLayout.addWidget(featurevalueLabel, 3, 0)
+        fsLayout.addWidget(self.featurevalueWidget, 3, 1)
+        fsLayout.addWidget(pointnumberLabel, 4, 0)
+        fsLayout.addWidget(self.pointnumberEdit, 4, 1)
         fsGroup.setLayout(fsLayout)
 
         mainLayout = QtGui.QVBoxLayout()
@@ -179,7 +185,8 @@ class FsWidget(QtGui.QWidget):
         self.PAlist = {}
         from mongokit import Connection
         try:
-            connection = Connection('192.168.10.226', 27017)
+            ip, Port = str(self.DBIPEdit.text()).split(':')
+            connection = Connection(ip, int(Port))
             for docment in connection['gsd']['PA_Col'].find():
                 self.PACombo.addItem(docment['gno'])
                 self.PAlist[docment['gno']] = str(docment['_id'])
@@ -358,8 +365,9 @@ class ConfigDialog(QtGui.QDialog):
             for widget in self.fspage.children():
                 if isinstance(widget, FsWidget):
                     cupa = {}
-                    cupa['addr'] = str(widget.DBIPEdit.text())
-                    if hasattr(self, 'PAlist'):
+                    cupa['Appaddr'] = str(widget.AppIPEdit.text())
+                    cupa['DBaddr'] = str(widget.DBIPEdit.text())
+                    if hasattr(widget, 'PAlist'):
                         cupa['_id'] = widget.PAlist[unicode(widget.PACombo.currentText())]
                     else:
                         cupa['_id'] = None

@@ -10,7 +10,7 @@ from guiutil import *
 class HomePage(QtGui.QWidget):
     def __init__(self, parent=None):
         super(HomePage, self).__init__(parent)
-        set_skin(self, os.sep.join(['skin', 'qss', 'dragondjf.qss']))
+        set_skin(self, os.sep.join(['skin', 'qss', 'MetroMainwindow.qss']))
         set_bg(parent)
         self.initpythonGrounp()
         # self.initClientGrounp()

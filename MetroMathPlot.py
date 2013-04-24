@@ -72,9 +72,10 @@ class MetroWindow(QtGui.QWidget):
                 button = item + 'Button'
                 getattr(self, button).clicked.connect(self.childpageChange)
 
-        for button in ['Navigation', 'Back', 'Forward']:
-            b = getattr(getattr(self, 'childFormPage'), button + 'Button')
-            b.clicked.connect(getattr(self, 'FormPage').pauseHandler)
+        for page in ['FormPage', 'DataShowPage', 'ProductPage']:
+            for button in ['Navigation', 'Back', 'Forward']:
+                b = getattr(getattr(self, 'child' + page), button + 'Button')
+                b.clicked.connect(getattr(self, page).pauseHandler)
 
     def childpageChange(self):
         currentpage = getattr(self, unicode('child' + self.sender().text()) + 'Page')
@@ -123,7 +124,7 @@ class MainWindow(QtGui.QMainWindow):
         self.setMinimumSize(800, 600)
         self.setWindowTitle('Math Plot')
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        set_skin(self, os.sep.join(['skin', 'qss', 'dragondjf.qss']))  # 设置背景图
+        set_skin(self, os.sep.join(['skin', 'qss', 'MetroMainwindow.qss']))  # 设置背景图
 
         self.fullscreenflag = False  # 初始化时非窗口最大话标志
         self.navigation_flag = True   # 导航标志，初始化时显示导航

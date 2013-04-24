@@ -8,19 +8,16 @@ QPushButton:hover, QPushButton:pressed , QPushButton:checked, QPushButton:focus
 {
 	background-color: rgb(85, 170, 255);
 	text-align: center;
-	/*padding-right: 20px;*/
 	font-weight:100
 }
 
 QPushButton:hover
 {
-	/*background-image: url(skin/icons/dark/appbar.arrow.left.png);*/
 	background-repeat:no-repeat;
 	background-position: center left;
 }
 QPushButton:pressed, QPushButton:checked
 {
-	/*background-image: url(skin/icons/light/appbar.arrow.left.png);*/
 	background-repeat:no-repeat;
 	background-position: center right;
 }
@@ -29,7 +26,6 @@ QPushButton:pressed, QPushButton:checked
 QPushButton#NavigationButton {
     width: 600px;
     height: 50px;
-    /*background: green;*/
    	background-image: url(skin/icons/dark/appbar.city.sanfrancisco.png);
 	background-repeat:no-repeat;
 	background-position: center left;
@@ -39,7 +35,6 @@ QPushButton#NavigationButton:hover, QPushButton#NavigationButton:pressed , QPush
 {
 	background-color: rgb(85, 170, 255);
 	text-align: center;
-	/*padding-right: 20px;*/
 	font-weight:100
 }
 
@@ -70,7 +65,6 @@ QPushButton#BackButton:hover, QPushButton#BackButton:pressed , QPushButton#BackB
 {
 	background-color: rgb(85, 170, 255);
 	text-align: center;
-	/*padding-right: 20px;*/
 	font-weight:100
 }
 
@@ -91,7 +85,6 @@ QPushButton#BackButton:pressed, QPushButton#BackButton:checked
 QPushButton#ForwardButton {
     width: 600px;
     height: 50px;
-    /*background: green;*/
    	background-image: url(skin/icons/dark/appbar.navigate.next.png);
 	background-repeat:no-repeat;
 	background-position: center right;
@@ -101,7 +94,6 @@ QPushButton#ForwardButton:hover, QPushButton#ForwardButton:pressed , QPushButton
 {
 	background-color: rgb(85, 170, 255);
 	text-align: center;
-	/*padding-right: 20px;*/
 	font-weight:100
 }
 
@@ -121,7 +113,6 @@ QPushButton#ForwardButton:pressed, QPushButton#ForwardButton:checked
 QPushButton#MinButton{
     width: 50px;
     height: 50px;
-    /*background: green;*/
    	background-image: url(skin/icons/dark/appbar.minus.png);
 	background-repeat:no-repeat;
 	background-position: center;
@@ -131,7 +122,6 @@ QPushButton#MinButton:hover, QPushButton#MinButton:pressed , QPushButton#MinButt
 {
 	background-color: rgb(85, 170, 255);
 	text-align: center;
-	/*padding-right: 20px;*/
 	font-weight:100
 }
 
@@ -152,7 +142,6 @@ QPushButton#MinButton:pressed, QPushButton#MinButton:checked
 QPushButton#MaxButton{
     width: 50px;
     height: 50px;
-    /*background: green;*/
    	background-image: url(skin/icons/dark/appbar.app.png);
 	background-repeat:no-repeat;
 	background-position: center;
@@ -162,7 +151,6 @@ QPushButton#MaxButton:hover, QPushButton#MaxButton:pressed , QPushButton#MaxButt
 {
 	background-color: rgb(85, 170, 255);
 	text-align: center;
-	/*padding-right: 20px;*/
 	font-weight:100
 }
 
@@ -182,7 +170,6 @@ QPushButton#MaxButton:pressed, QPushButton#MaxButton:checked
 QPushButton#CloseButton{
     width: 50px;
     height: 50px;
-    /*background: green;*/
    	background-image: url(skin/icons/dark/appbar.close.png);
 	background-repeat:no-repeat;
 	background-position: center;
@@ -192,7 +179,6 @@ QPushButton#CloseButton:hover, QPushButton#CloseButton:pressed , QPushButton#Clo
 {
 	background-color: rgb(85, 170, 255);
 	text-align: center;
-	/*padding-right: 20px;*/
 	font-weight:100
 }
 
