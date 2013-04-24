@@ -13,6 +13,17 @@ import util
 timeinteral = 100
 
 
+# def mouseMoved(evt):
+#     pos = evt  ## using signal proxy turns original arguments into a tuple
+#     plotItem = self.curvewidget.plotItem
+#     if plotItem.sceneBoundingRect().contains(pos):
+#         mousePoint = plotItem.vb.mapSceneToView(pos)
+#         index = int(mousePoint.x())
+#         # if index > 0 and index < len(data1):
+#         #     label.setText("<span style='font-size: 12pt'>x=%0.1f,   <span style='color: red'>y1=%0.1f</span>,   <span style='color: green'>y2=%0.1f</span>" % (mousePoint.x(), data1[index], data2[index]))
+#         self.vLine.setPos(mousePoint.x())
+#         self.hLine.setPos(mousePoint.y())
+
 class ProductPage(QtGui.QWidget):
     def __init__(self, parent=None):
         super(ProductPage, self).__init__(parent)
@@ -153,8 +164,17 @@ class PlotWidget(QtGui.QWidget):
         self.setLayout(vlayout)
 
     def createPlotCurve(self):
-        curvewidget = pg.PlotWidget(self)
-        self.curvewidget = curvewidget
+        self.curvewidget = pg.PlotWidget(self)
+
+        self.vLine = pg.InfiniteLine(angle=90, movable=False)
+        self.hLine = pg.InfiniteLine(angle=0, movable=False)
+
+        self.curvewidget.plotItem.addItem(self.vLine, ignoreBounds=True)
+        self.curvewidget.plotItem.addItem(self.hLine, ignoreBounds=True)
+
+        self.curvewidget.plotItem.setAutoVisible(y=True)
+        self.curvewidget.plotItem.setLabels(left="<span style='font-size: 12pt'> left", bottom="<span style='font-size: 12pt'> bottom", right='right', top='top')
+        self.curvewidget.plotItem.scene().sigMouseMoved.connect(self.mouseMoved) #鼠标移动响应
 
     def createCtrlWidget(self):
         self.ctrlbuttons = [['DataSource', 'Hide'], ['Start', 'Pause']]
@@ -179,6 +199,30 @@ class PlotWidget(QtGui.QWidget):
         getattr(self, 'PauseButton').setEnabled(False)
         set_skin(self.ctrlwidget, os.sep.join(['skin', 'qss', 'MetroPlotLeftControl.qss']))
 
+    def mouseMoved(self, evt):
+        pos = evt  ## using signal proxy turns original arguments into a tuple
+        plotItem = self.curvewidget.plotItem
+        if plotItem.sceneBoundingRect().contains(pos):
+            mousePoint = plotItem.vb.mapSceneToView(pos)
+            index = int(mousePoint.x())
+            title = []
+            if hasattr(self, 'showf'):
+                for key in self.showf:
+                    if hasattr(self, key + 'item'):
+                        plotcurveItem = getattr(self, key + 'item')
+                        xData, yData = plotcurveItem.getData()
+                        if index > 0 and index < len(xData):
+                            if self.color[self.showf.index(key)] is 'r':
+                                color = 'red'
+                            elif self.color[self.showf.index(key)] is 'g':
+                                color = 'green'
+                            elif self.color[self.showf.index(key)] is 'b':
+                                color = 'blue'
+                            title.append("<span style='color: %s'>%s=%d</span>" % (color, key, yData[index]))
+                plotItem.setTitle("<span style='font-size: 12pt'>%s=%d, " % ('i' ,index) + ' ,'.join(title))
+            self.vLine.setPos(mousePoint.x())
+            self.hLine.setPos(mousePoint.y())
+
 
 class WaveFigure(PlotWidget):
     def __init__(self, point_num=300):
@@ -194,16 +238,10 @@ class WaveFigure(PlotWidget):
         getattr(self, 'StartButton').clicked.connect(self.startHandler)
         getattr(self, 'PauseButton').clicked.connect(self.pauseHandler)
 
-    def startwork(self, padata, showf):
+    def startwork(self, padata, showf, color):
         for key in showf:
             if not hasattr(self, key + 'item'):
-                if len(showf) == 1:
-                    pen = [(255, 0, 0)]
-                elif len(showf) == 2:
-                    pen = [(255, 0, 0), (0, 255, 0)]
-                elif len(showf) == 3:
-                    pen = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]
-                setattr(self, key + 'item', pg.PlotCurveItem(padata[key][-self.point_num:], pen=pen[showf.index(key)]))
+                setattr(self, key + 'item', pg.PlotCurveItem(padata[key][-self.point_num:], pen=color[showf.index(key)]))
                 self.curvewidget.addItem(getattr(self, key + 'item'))
                 getattr(self, key + 'item').setData(padata[key][-self.point_num:])
             else:
@@ -257,10 +295,20 @@ class WaveFigure(PlotWidget):
             self.showf = showf
         else:
             self.showf = ['max', 'min']
+
+        if len(self.showf) == 1:
+            color = ['r']
+        elif len(self.showf) == 2:
+            color = ['r', 'b']
+        elif len(self.showf) == 3:
+            color = ['r', 'b', 'g']
+
+        self.color = color
+
         getattr(self, 'StartButton').setEnabled(True)
 
     def timerEvent(self, event):
         if self.objectName() in padict:
-            self.startwork(padict[self.objectName()], self.showf)
+            self.startwork(padict[self.objectName()], self.showf, self.color)
         else:
             self.killTimer(self.timer)

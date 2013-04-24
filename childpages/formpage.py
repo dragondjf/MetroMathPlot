@@ -204,15 +204,9 @@ class WaveFigure(PlotWidget):
         getattr(self, 'StartButton').clicked.connect(self.startHandler)
         getattr(self, 'PauseButton').clicked.connect(self.pauseHandler)
 
-    def startwork(self, padata, showf):
+    def startwork(self, padata, showf, color):
         for key in showf:
             if not hasattr(self, key + 'item'):
-                if len(showf) == 1:
-                        color = ['r']
-                elif len(showf) == 2:
-                    color = ['r', 'b']
-                elif len(showf) == 3:
-                    color = ['r', 'b', 'g']
                 setattr(self, key + 'item', make.curve(range(self.point_num), padata[key][-self.point_num:], color=color[showf.index(key)]))
                 self.curvewidget.plot.add_item(getattr(self, key + 'item'))
             else:
@@ -267,11 +261,20 @@ class WaveFigure(PlotWidget):
         else:
             self.showf = ['max', 'min']
 
+        if len(self.showf) == 1:
+            color = ['r']
+        elif len(self.showf) == 2:
+            color = ['r', 'b']
+        elif len(self.showf) == 3:
+            color = ['r', 'b', 'g']
+
+        self.color = color
+
         getattr(self, 'StartButton').setEnabled(True)
 
     def timerEvent(self, event):
         if self.objectName() in padict:
-            self.startwork(padict[self.objectName()], self.showf)
+            self.startwork(padict[self.objectName()], self.showf, self.color)
             for item in self.curvewidget.plot.get_items():
                 if isinstance(item, guiqwt.curve.CurveItem):
                     item.plot().do_autoscale()
