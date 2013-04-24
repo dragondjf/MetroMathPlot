@@ -1,0 +1,19 @@
+QPushButton#PlotDataSourceButton{
+    width: 40px;
+    height: 400px;
+}
+
+QPushButton#PlotStartButton{
+    width: 40px;
+    height: 400px;
+}
+
+QPushButton#PlotPauseButton{
+    width: 40px;
+    height: 400px;
+}
+
+QPushButton#PlotHideButton{
+    width: 40px;
+    height: 400px;
+}

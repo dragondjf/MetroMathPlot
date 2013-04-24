@@ -1,0 +1,29 @@
+QPushButton#BackGroundColorButton
+{
+    height: 400px;
+}
+
+QPushButton#BackGroundImageButton
+{
+    height: 400px;
+}
+
+QPushButton#ButtonColorButton
+{
+    height: 400px;
+}
+
+QPushButton#ButtonImageButton
+{
+    height: 400px;
+}
+
+QPushButton#ToolButtonColorButton
+{
+    height: 400px;
+}
+
+QPushButton#ToolButtonImageButton
+{
+    height: 400px;
+}
