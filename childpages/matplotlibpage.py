@@ -17,9 +17,9 @@ import util
 timeinteral = 100
 
 
-class DataShowPage(QtGui.QWidget):
+class MatPlotLibPage(QtGui.QWidget):
     def __init__(self, parent=None):
-        super(DataShowPage, self).__init__(parent)
+        super(MatPlotLibPage, self).__init__(parent)
         self.parent = parent
         self.createLeftToolBar()
         self.createTopToolBar()
@@ -46,7 +46,7 @@ class DataShowPage(QtGui.QWidget):
         self.layout().setContentsMargins(0, 0, 10, 10)
 
         self.navigation_flag = True   # 导航标志，初始化时显示导航
-        set_skin(self, os.sep.join(['skin', 'qss', 'MetroPlotItemLeftControl.qss']))
+        # set_skin(self, os.sep.join(['skin', 'qss', 'MetroPlotItemLeftControl.qss']))
 
     def createLeftToolBar(self):
         navbutton = ['Start', 'Pause', 'Add', 'Show']

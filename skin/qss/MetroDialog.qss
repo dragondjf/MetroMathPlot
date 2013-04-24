@@ -1,20 +1,20 @@
 QDialog#QInputDialog{
-	background: rgb(125, 125, 125);
+    background: rgb(125, 125, 125);
 }
 
 QDialog#QMessageBox{
-	background: rgb(125, 125, 125);
+    background: rgb(125, 125, 125);
 }
 
 QPushButton
 {
-	color: rgb(255, 255, 255);
-	background-color: rgb(167, 205, 255);
-	border:none;
+    color: rgb(255, 255, 255);
+    background-color: rgb(167, 205, 255);
+    border:none;
     /*padding: 3px;*/
-	font-family: "Verdana";
-	font-size: 15px;
-	text-align: center;
+    font-family: "Verdana";
+    font-size: 15px;
+    text-align: center;
     width: 200px; 
     height: 50px;
 }
@@ -22,71 +22,71 @@ QPushButton
 
 QPushButton#OkButton:hover, QPushButton#OkButton:pressed , QPushButton#OkButton:checked
 {
-	background-color: rgb(85, 170, 255);
+    background-color: rgb(85, 170, 255);
 
 }
 QPushButton#OkButton:hover
 {
-	background-image: url(skin/icons/dark/appbar.check.png);
-	background-repeat:no-repeat;
-	background-position: center left;
+    background-image: url(skin/icons/dark/appbar.check.png);
+    background-repeat:no-repeat;
+    background-position: center left;
 }
 QPushButton#OkButton:pressed, QPushButton#OkButton:checked
 {
-	background-image: url(skin/icons/light/appbar.check.png);
-	background-repeat:no-repeat;
-	background-position: center right;
+    background-image: url(skin/icons/light/appbar.check.png);
+    background-repeat:no-repeat;
+    background-position: center right;
 }
 
 QPushButton#CancelButton:hover, QPushButton#CancelButton:pressed , QPushButton#CancelButton:checked
 {
-	background-color: rgb(85, 170, 255);
-	text-align: center;
+    background-color: rgb(85, 170, 255);
+    text-align: center;
 }
 QPushButton#CancelButton:hover
 {
-	background-image: url(skin/icons/dark/appbar.cancel.png);
-	background-repeat:no-repeat;
-	background-position: center left;
+    background-image: url(skin/icons/dark/appbar.cancel.png);
+    background-repeat:no-repeat;
+    background-position: center left;
 }
 QPushButton#CancelButton:pressed, QPushButton#CancelButton:checked
 {
-	background-image: url(skin/icons/light/appbar.cancel.png);
-	background-repeat:no-repeat;
-	background-position: center right;
+    background-image: url(skin/icons/light/appbar.cancel.png);
+    background-repeat:no-repeat;
+    background-position: center right;
 }
 
 
 
 QPushButton#InfoButton
 {
-	background-image: url(skin/icons/dark/appbar.information.png);
-	background-repeat:no-repeat;
-	background-position: center left;
+    background-image: url(skin/icons/dark/appbar.information.png);
+    background-repeat:no-repeat;
+    background-position: center left;
     width: 500px; 
     height: 50px;
 }
 
 QPushButton#InfoButton:hover, QPushButton#InfoButton:pressed , QPushButton#InfoButton:checked
 {
-	background-color: rgb(85, 170, 255);
+    background-color: rgb(85, 170, 255);
 
 }
 QPushButton#InfoButton:hover
 {
-	background-image: url(skin/icons/dark/appbar.information.png);
-	background-repeat:no-repeat;
-	background-position: center left;
+    background-image: url(skin/icons/dark/appbar.information.png);
+    background-repeat:no-repeat;
+    background-position: center left;
 }
 QPushButton#InfoButton:pressed, QPushButton#InfoButton:checked
 {
-	background-image: url(skin/icons/light/appbar.information.png);
-	background-repeat:no-repeat;
-	background-position: center left;
+    background-image: url(skin/icons/light/appbar.information.png);
+    background-repeat:no-repeat;
+    background-position: center left;
 }
 
 QTextEdit{
-	height: 200px;
+    height: 200px;
     background: rgb(85, 170, 255);
     selection-background-color: rgb(125, 125, 125);
 }

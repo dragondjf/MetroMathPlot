@@ -1,25 +1,8 @@
-/* Metro Style*/
-QToolBar#PlotToolBar{
-    background: rgb(160, 160, 160);
-    spacing: 10px; /* spacing between items in the tool bar */
-    border: none;
-    border-radius: 5px;
-}
-
-QSpinBox{
-    width: 100px;
-}
-
-
-QPushButton:disabled{
-    background-color: rgb(200, 200, 200);
-}
-
+/* Metro Style for DBPage LeftControlBar*/
 
 QPushButton#StartButton {
     width: 80px;
-    height: 400px;
-    /*background: green;*/
+    height: 1000px;
     background-image: url(skin/icons/dark/appbar.cabinet.in.png);
     background-repeat:no-repeat;
     background-position: center top;
@@ -29,7 +12,6 @@ QPushButton#StartButton:hover, QPushButton#StartButton:pressed , QPushButton#Sta
 {
     background-color: rgb(85, 170, 255);
     text-align: center;
-    /*padding-right: 20px;*/
     font-weight:100
 }
 
@@ -49,8 +31,7 @@ QPushButton#StartButton:pressed, QPushButton#StartButton:checked
 
 QPushButton#PauseButton {
     width: 80px;
-    height: 400px;
-    /*background: green;*/
+    height: 1000px;
     background-image: url(skin/icons/dark/appbar.control.pause.png);
     background-repeat:no-repeat;
     background-position: center top;
@@ -60,7 +41,6 @@ QPushButton#PauseButton:hover, QPushButton#PauseButton:pressed , QPushButton#Pau
 {
     background-color: rgb(85, 170, 255);
     text-align: center;
-    /*padding-right: 20px;*/
     font-weight:100
 }
 
@@ -78,63 +58,30 @@ QPushButton#PauseButton:pressed, QPushButton#PauseButton:checked
 }
 
 
-QPushButton#AddButton {
+QPushButton#CustomButton {
     width: 80px; 
-    height: 400px;
-    /*background: green;*/
-    background-image: url(skin/icons/dark/appbar.add.png);
+    height: 1000px;
+    background-image: url(skin/icons/dark/appbar.cell.function.png);
     background-repeat:no-repeat;
     background-position: center top;
 }
 
-QPushButton#AddButton:hover, QPushButton#AddButton:pressed , QPushButton#AddButton:checked
+QPushButton#CustomButton:hover, QPushButton#CustomButton:pressed , QPushButton#CustomButton:checked
 {
     background-color: rgb(85, 170, 255);
     text-align: center;
-    /*padding-right: 20px;*/
     font-weight:100
 }
 
-QPushButton#AddButton:hover
+QPushButton#CustomButton:hover
 {
-    background-image: url(skin/icons/dark/appbar.add.png);
+    background-image: url(skin/icons/dark/appbar.cell.function.png);
     background-repeat:no-repeat;
     background-position: center bottom;
 }
-QPushButton#AddButton:pressed, QPushButton#AddButton:checked
+QPushButton#CustomButton:pressed, QPushButton#CustomButton:checked
 {
-    background-image: url(skin/icons/light/appbar.add.png);
-    background-repeat:no-repeat;
-    background-position: center bottom;
-}
-
-
-QPushButton#ShowButton {
-    width: 80px; 
-    height: 400px;
-    /*background: green;*/
-    background-image: url(skin/icons/dark/appbar.image.png);
-    background-repeat:no-repeat;
-    background-position: center top;
-}
-
-QPushButton#ShowButton:hover, QPushButton#ShowButton:pressed , QPushButton#ShowButton:checked
-{
-    background-color: rgb(85, 170, 255);
-    text-align: center;
-    /*padding-right: 20px;*/
-    font-weight:100
-}
-
-QPushButton#ShowButton:hover
-{
-    background-image: url(skin/icons/dark/appbar.image.png);
-    background-repeat:no-repeat;
-    background-position: center bottom;
-}
-QPushButton#ShowButton:pressed, QPushButton#ShowButton:checked
-{
-    background-image: url(skin/icons/light/appbar.image.png);
+    background-image: url(skin/icons/light/appbar.cell.function.png);
     background-repeat:no-repeat;
     background-position: center bottom;
 }

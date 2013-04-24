@@ -17,9 +17,9 @@ from cache import padict
 timeinteral = 100
 
 
-class FormPage(QtGui.QWidget):
+class GuiQwtPage(QtGui.QWidget):
     def __init__(self, parent=None):
-        super(FormPage, self).__init__(parent)
+        super(GuiQwtPage, self).__init__(parent)
         self.parent = parent
 
         self.createLeftToolBar()
@@ -45,7 +45,7 @@ class FormPage(QtGui.QWidget):
         self.layout().setContentsMargins(0, 0, 10, 10)
 
         self.navigation_flag = True   # 导航标志，初始化时显示导航
-        set_skin(self, os.sep.join(['skin', 'qss', 'MetroPlotItemLeftControl.qss']))
+        # set_skin(self, os.sep.join(['skin', 'qss', 'MetroPlotItemLeftControl.qss']))
 
     def createLeftToolBar(self):
         navbutton = ['Start', 'Pause', 'Add', 'Show']

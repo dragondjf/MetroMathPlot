@@ -3,7 +3,6 @@
 /***********************************************************/
 QMainWindow{
     background: rgb(255,255,255);
-    /*border-image: url(images/Logo.png);*/
 }
 
 /***********************************************************/
@@ -11,28 +10,28 @@ QMainWindow{
 /***********************************************************/
 QPushButton
 {
-	color: rgb(255, 255, 255);
-	background-color: rgb(167, 205, 255);
-	border:none;
-	font-family: "Verdana";
-	font-size: 15px;
-	text-align: center;
+    color: rgb(255, 255, 255);
+    background-color: rgb(167, 205, 255);
+    border:none;
+    font-family: "Verdana";
+    font-size: 15px;
+    text-align: center;
     width: 60px; 
 }
 QPushButton:hover, QPushButton:pressed , QPushButton:checked
 {
-	background-color: rgb(85, 170, 255);
-	text-align: center;
+    background-color: rgb(85, 170, 255);
+    text-align: center;
 }
 QPushButton:hover
 {
-	background-repeat:no-repeat;
-	background-position: center left;
+    background-repeat:no-repeat;
+    background-position: center left;
 }
 QPushButton:pressed, QPushButton:checked
 {
-	background-repeat:no-repeat;
-	background-position: center left;
+    background-repeat:no-repeat;
+    background-position: center left;
 }
 
 QPushButton:disabled{

@@ -112,4 +112,4 @@ class ChildPage(ContextMenu):
         QtCore.QObject.connect(getattr(self, 'Max' + 'Button'), QtCore.SIGNAL('clicked()'), self.parent.parent(), QtCore.SLOT('windowMaxNormal()'))
         QtCore.QObject.connect(getattr(self, 'Close' + 'Button'), QtCore.SIGNAL('clicked()'), self.parent.parent(), QtCore.SLOT('close()'))
 
-        set_skin(self, os.sep.join(['skin', 'qss', 'MetroToolBar.qss']))
+        # set_skin(self, os.sep.join(['skin', 'qss', 'MetroToolBar.qss']))

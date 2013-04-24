@@ -24,9 +24,9 @@ timeinteral = 100
 #         self.vLine.setPos(mousePoint.x())
 #         self.hLine.setPos(mousePoint.y())
 
-class ProductPage(QtGui.QWidget):
+class PyQtGraphPage(QtGui.QWidget):
     def __init__(self, parent=None):
-        super(ProductPage, self).__init__(parent)
+        super(PyQtGraphPage, self).__init__(parent)
         self.parent = parent
         self.createLeftToolBar()
         self.createTopToolBar()
@@ -49,7 +49,7 @@ class ProductPage(QtGui.QWidget):
         self.layout().setContentsMargins(0, 0, 10, 10)
 
         self.navigation_flag = True   # 导航标志，初始化时显示导航
-        set_skin(self, os.sep.join(['skin', 'qss', 'MetroPlotItemLeftControl.qss']))
+        # set_skin(self, os.sep.join(['skin', 'qss', 'MetroPlotItemLeftControl.qss']))
 
     def createLeftToolBar(self):
         navbutton = ['Start', 'Pause', 'Add', 'Show']

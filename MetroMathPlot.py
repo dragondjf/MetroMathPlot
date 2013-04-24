@@ -21,7 +21,7 @@ class MetroWindow(QtGui.QWidget):
         self.initUI()
 
     def initUI(self):
-        self.MetroButtons = [['Home', 'System', 'DataShow'], ['Form', 'View', 'Tool'], ['Product', 'Help', 'About']]
+        self.MetroButtons = [['Home', 'System', 'DB'], ['MatPlotLib', 'GuiQwt', 'PyQtGraph'], ['Tool', 'Help', 'About']]
         self.createMetroButton()
 
         self.pages = QtGui.QStackedWidget()
@@ -71,10 +71,10 @@ class MetroWindow(QtGui.QWidget):
                 button = item + 'Button'
                 getattr(self, button).clicked.connect(self.childpageChange)
 
-        for page in ['FormPage', 'DataShowPage', 'ProductPage']:
+        for page in ['MatPlotLib', 'GuiQwt', 'PyQtGraph']:
             for button in ['Navigation', 'Back', 'Forward']:
-                b = getattr(getattr(self, 'child' + page), button + 'Button')
-                b.clicked.connect(getattr(self, page).pauseHandler)
+                b = getattr(getattr(self, 'child' + page + 'Page'), button + 'Button')
+                b.clicked.connect(getattr(self, page + 'Page').pauseHandler)
 
     def childpageChange(self):
         currentpage = getattr(self, unicode('child' + self.sender().text()) + 'Page')
@@ -136,9 +136,20 @@ class MainWindow(QtGui.QMainWindow):
         # self.setMouseTracking(True)
 
     def setskin(self):
-        set_skin(self, os.sep.join(['skin', 'qss', 'MetroMainwindow.qss']))  # 设置背景图
-        set_skin(self.centeralwindow, os.sep.join(['skin', 'qss', 'MetroNavigation.qss']))
-        
+        set_skin(self.centeralwindow, os.sep.join(['skin', 'qss', 'MetroNavigationPage.qss']))  # 设置导航页面样式
+
+        for buttons in self.centeralwindow.MetroButtons:
+            for item in buttons:
+                childpage = getattr(self.centeralwindow, 'child' + item + 'Page')
+                set_skin(childpage, os.sep.join(['skin', 'qss', 'MetroTopToolBar.qss']))   # 设置导航工具条的样式
+
+        for page in ['MatPlotLib', 'GuiQwt', 'PyQtGraph']:
+            page = getattr(self.centeralwindow, page + 'Page')
+            set_skin(page, os.sep.join(['skin', 'qss', 'MetroPlotItemLeftControl.qss']))  # 设置波形页面左侧工具条样式
+
+        set_skin(getattr(self.centeralwindow, 'DBPage'), os.sep.join(['skin', 'qss', 'MetroDBPage.qss']))  # 设置主窗口样式
+
+        set_skin(self, os.sep.join(['skin', 'qss', 'MetroMainwindow.qss']))  # 设置主窗口样式
 
     def set_background(self, bg=None):
         set_bg(self, bg)

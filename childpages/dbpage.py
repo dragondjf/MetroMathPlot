@@ -6,6 +6,79 @@ from PyQt4 import QtCore
 from guiutil import *
 
 
+class DBPage(QtGui.QWidget):
+    def __init__(self, parent=None):
+        super(DBPage, self).__init__(parent)
+        self.parent = parent
+        self.createToolBar()
+        self.creatSearchEdit()
+
+        self.view = QtGui.QTreeView(self)
+
+        self.treeWidget = QtGui.QWidget()
+        self.treeLayout = QtGui.QVBoxLayout()
+        self.treeLayout.addWidget(self.searchEdit)
+        self.treeLayout.addWidget(self.view)
+        self.treeWidget.setLayout(self.treeLayout)
+
+        self.mainLayout = QtGui.QHBoxLayout()
+        self.mainLayout.addWidget(self.navigation)
+        self.mainLayout.addWidget(self.treeWidget)
+        self.setLayout(self.mainLayout)
+
+        self.navigation_flag = True   # 导航标志，初始化时显示导航
+
+    def creatSearchEdit(self):
+        self.searchEdit = QtGui.QLineEdit()
+        self.searchEdit.setObjectName('SearchEdit')
+        completer = QtGui.QCompleter()
+        self.searchEdit.setCompleter(completer)
+        model = QtGui.QStringListModel()
+        completer.setModel(model)
+        self.get_data(model)
+
+    def get_data(self, model):
+        model.setStringList(["completion", "data", "goes", "here"])
+
+    def createToolBar(self):
+        navbutton = ['Start', 'Pause', 'Custom']
+        self.buttontext = {
+            'Start': u'开始查询\n数据库',
+            'Pause': u'暂停',
+            'Custom': u'自定义'
+        }
+        self.navigation = QtGui.QWidget()
+        navigationLayout = QtGui.QVBoxLayout()
+
+        for item in navbutton:
+            button = item + 'Button'
+            setattr(self, button, QtGui.QPushButton(self.buttontext[item]))
+            getattr(self, button).setObjectName(button)
+            navigationLayout.addWidget(getattr(self, button))
+        self.navigation.setLayout(navigationLayout)
+        set_skin(self.navigation, os.sep.join(['skin', 'qss', 'MetroDBPageLeftControlBar.qss']))
+
+        getattr(self, 'StartButton').clicked.connect(self.startQueryMongoDB)
+
+    def startQueryMongoDB(self):
+        from mongokit import Connection
+        connection = Connection()
+        headers = ("Index", "Value", "Type")
+        self.model = TreeModel(headers, connection)
+        self.view.setModel(self.model)
+        for column in range(self.model.columnCount()):
+            self.view.resizeColumnToContents(column)
+
+        self.view.setColumnWidth(0, self.parent.geometry().width() / 4)
+        self.view.setColumnWidth(1, self.parent.geometry().width() * 3 / 5)
+
+        getattr(self, 'StartButton').setEnabled(False)
+
+    def resizeEvent(self, event):
+        self.view.setColumnWidth(0, self.parent.geometry().width() / 4)
+        self.view.setColumnWidth(1, self.parent.geometry().width() * 3 / 5)
+
+
 class TreeItem(object):
     def __init__(self, data, parent=None):
         self.parentItem = parent
@@ -235,78 +308,3 @@ class TreeModel(QtCore.QAbstractItemModel):
                         docs[-1].insertChildren(docs[-1].childCount(), 1, self.rootItem.columnCount())
                         for column in range(len(coldata)):
                             docs[-1].child(docs[-1].childCount() - 1).setData(column, itemdata[column])
-
-
-class ViewPage(QtGui.QWidget):
-    def __init__(self, parent=None):
-        super(ViewPage, self).__init__(parent)
-        self.parent = parent
-        self.createToolBar()
-        self.creatSearchEdit()
-
-        self.view = QtGui.QTreeView(self)
-
-        self.treeWidget = QtGui.QWidget()
-        self.treeLayout = QtGui.QVBoxLayout()
-        self.treeLayout.addWidget(self.searchEdit)
-        self.treeLayout.addWidget(self.view)
-        self.treeWidget.setLayout(self.treeLayout)
-
-        self.mainLayout = QtGui.QHBoxLayout()
-        self.mainLayout.addWidget(self.navigation)
-        self.mainLayout.addWidget(self.treeWidget)
-        self.setLayout(self.mainLayout)
-        set_skin(self, os.sep.join(['skin', 'qss', 'MetroViewPage.qss']))
-
-        self.navigation_flag = True   # 导航标志，初始化时显示导航
-
-    def creatSearchEdit(self):
-        self.searchEdit = QtGui.QLineEdit()
-        self.searchEdit.setObjectName('SearchEdit')
-        completer = QtGui.QCompleter()
-        self.searchEdit.setCompleter(completer)
-        model = QtGui.QStringListModel()
-        completer.setModel(model)
-        self.get_data(model)
-
-    def get_data(self, model):
-        model.setStringList(["completion", "data", "goes", "here"])
-
-    def createToolBar(self):
-        navbutton = ['Start', 'Pause', 'Custom']
-        self.buttontext = {
-            'Start': u'开始查询\n数据库',
-            'Pause': u'暂停',
-            'Custom': u'自定义'
-        }
-        self.navigation = QtGui.QWidget()
-        navigationLayout = QtGui.QVBoxLayout()
-
-        for item in navbutton:
-            button = item + 'Button'
-            setattr(self, button, QtGui.QPushButton(self.buttontext[item]))
-            getattr(self, button).setObjectName(button)
-            navigationLayout.addWidget(getattr(self, button))
-        self.navigation.setLayout(navigationLayout)
-        set_skin(self.navigation, os.sep.join(['skin', 'qss', 'MetroDataShow.qss']))
-
-        getattr(self, 'StartButton').clicked.connect(self.startQueryMongoDB)
-        # getattr(self, 'PauseButton').clicked.connect(self.stopploting)
-
-    def startQueryMongoDB(self):
-        from mongokit import Connection
-        connection = Connection()
-        headers = ("Index", "Value", "Type")
-        self.model = TreeModel(headers, connection)
-        self.view.setModel(self.model)
-        for column in range(self.model.columnCount()):
-            self.view.resizeColumnToContents(column)
-
-        self.view.setColumnWidth(0, self.parent.geometry().width() / 4)
-        self.view.setColumnWidth(1, self.parent.geometry().width() * 3 / 5)
-
-        getattr(self, 'StartButton').setEnabled(False)
-
-    def resizeEvent(self, event):
-        self.view.setColumnWidth(0, self.parent.geometry().width() / 4)
-        self.view.setColumnWidth(1, self.parent.geometry().width() * 3 / 5)
