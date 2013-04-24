@@ -85,32 +85,3 @@ QTreeView::branch:open:has-children:has-siblings  {
          border-image: none;
          image: url(branch-open.png);
  }
-
-
-QPushButton#StartButton {
-    width: 80px;
-    height: 600px;
-    background-image: url(skin/icons/dark/appbar.cabinet.in.png);
-    background-repeat:no-repeat;
-    background-position: center top;
-}
-
-QPushButton#StartButton:hover, QPushButton#StartButton:pressed , QPushButton#StartButton:checked
-{
-    background-color: rgb(85, 170, 255);
-    text-align: center;
-    font-weight:100
-}
-
-QPushButton#StartButton:hover
-{
-    background-image: url(skin/icons/dark/appbar.cabinet.in.png);
-    background-repeat:no-repeat;
-    background-position: center bottom;
-}
-QPushButton#StartButton:pressed, QPushButton#StartButton:checked
-{
-    background-image: url(skin/icons/light/appbar.cabinet.in.png);
-    background-repeat:no-repeat;
-    background-position: center bottom;
-}

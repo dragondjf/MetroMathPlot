@@ -13,17 +13,6 @@ import util
 timeinteral = 100
 
 
-# def mouseMoved(evt):
-#     pos = evt  ## using signal proxy turns original arguments into a tuple
-#     plotItem = self.curvewidget.plotItem
-#     if plotItem.sceneBoundingRect().contains(pos):
-#         mousePoint = plotItem.vb.mapSceneToView(pos)
-#         index = int(mousePoint.x())
-#         # if index > 0 and index < len(data1):
-#         #     label.setText("<span style='font-size: 12pt'>x=%0.1f,   <span style='color: red'>y1=%0.1f</span>,   <span style='color: green'>y2=%0.1f</span>" % (mousePoint.x(), data1[index], data2[index]))
-#         self.vLine.setPos(mousePoint.x())
-#         self.hLine.setPos(mousePoint.y())
-
 class PyQtGraphPage(QtGui.QWidget):
     def __init__(self, parent=None):
         super(PyQtGraphPage, self).__init__(parent)

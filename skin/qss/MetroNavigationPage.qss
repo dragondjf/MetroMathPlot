@@ -94,19 +94,19 @@ QPushButton#MatPlotLibButton:pressed, QPushButton#MatPlotLibButton:checked
 QPushButton#GuiQwtButton
 {
     height: 400px;
-    background-image: url(skin/icons/dark/appbar.table.select.png);
+    background-image: url(skin/icons/dark/appbar.axis.three.png);
     background-repeat:no-repeat;
     background-position: center top;
 }
 QPushButton#GuiQwtButton:hover
 {
-    background-image: url(skin/icons/dark/appbar.table.select.png);
+    background-image: url(skin/icons/dark/appbar.axis.three.png);
     background-repeat:no-repeat;
     background-position: center right;
 }
 QPushButton#GuiQwtButton:pressed, QPushButton#GuiQwtButton:checked
 {
-    background-image: url(skin/icons/light/appbar.table.select.png);
+    background-image: url(skin/icons/light/appbar.axis.three.png);
     background-repeat:no-repeat;
     background-position: center left;
 }
@@ -114,19 +114,19 @@ QPushButton#GuiQwtButton:pressed, QPushButton#GuiQwtButton:checked
 QPushButton#PyQtGraphButton
 {
     height: 400px;
-    background-image: url(skin/icons/dark/appbar.adobe.premierpro.png);
+    background-image: url(skin/icons/dark/appbar.medical.pulse.png);
     background-repeat:no-repeat;
     background-position: center top;
 }
 QPushButton#PyQtGraphButton:hover
 {
-    background-image: url(skin/icons/dark/appbar.adobe.premierpro.png);
+    background-image: url(skin/icons/dark/appbar.medical.pulse.png);
     background-repeat:no-repeat;
     background-position: center right;
 }
 QPushButton#PyQtGraphButton:pressed, QPushButton#PyQtGraphButton:checked
 {
-    background-image: url(skin/icons/light/appbar.adobe.premierpro.png);
+    background-image: url(skin/icons/light/appbar.medical.pulse.png);
     background-repeat:no-repeat;
     background-position: center left;
 }
