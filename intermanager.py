@@ -9,7 +9,7 @@ import util
 import threading
 import time
 import websocket
-import json
+# import json
 
 
 class InteractiveManager(QtCore.QObject):

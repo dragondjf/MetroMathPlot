@@ -1,0 +1,1 @@
+/usr/share/pyshared/cx_Freeze/initscripts/Console.py

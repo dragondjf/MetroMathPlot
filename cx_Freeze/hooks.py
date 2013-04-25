@@ -1,0 +1,1 @@
+/usr/share/pyshared/cx_Freeze/hooks.py
