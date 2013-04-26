@@ -3,8 +3,7 @@
 
 import threading
 import websocket
-
-import threading
+from PyQt4 import QtCore
 import multiprocessing
 import Queue
 import time
@@ -15,8 +14,12 @@ from cache import padict
 import util
 
 
-class WaveThreadHandler(threading.Thread):
+class WaveThreadHandler(threading.Thread, QtCore.QObject):
+
+    plotsignal = QtCore.pyqtSignal()
+
     def __init__(self, figurename, settintparameter):
+        QtCore.QObject.__init__(self)
         threading.Thread.__init__(self)
         self.figurename = figurename
         self.settintparameter = settintparameter
@@ -56,22 +59,31 @@ class WaveThreadHandler(threading.Thread):
                 for key in item:
                     padata[key][-1] = item[key]
             padict.update({self.figurename: padata})
+            self.plotsignal.emit()
 
 
-class WaveReplayHandler(threading.Thread):
-    def __init__(self, figurename, wavfiles, importspreed):
+class WaveReplayHandler(threading.Thread, QtCore.QObject):
+
+    plotsignal = QtCore.pyqtSignal()
+
+    def __init__(self, figurename, wavfiles, importspreed, plotmode):
+        QtCore.QObject.__init__(self)
         threading.Thread.__init__(self)
+
+        self.event = threading.Event()
+        self.event.set()
+
         self.figurename = figurename
         self.wavfiles = wavfiles
         self.importspreed = importspreed
+        self.plotmode = plotmode
         self.importwavspreed = 0.2
         self.setDaemon(True)
-        self.start()
 
     def run(self):
         import algorithm
         padata = algorithm.creat_data(algorithm.Names)
-        while True:
+        while self.event.isSet():
             if hasattr(self, 'wavfiles'):
                 for wavfile in self.wavfiles:
                     x, fs, bits, N = util.wavread(unicode(wavfile))
@@ -83,4 +95,6 @@ class WaveReplayHandler(threading.Thread):
                         padata['max'][-1] = max(raw_data)
                         padata['min'][-1] = min(raw_data)
                         padict.update({self.figurename: padata})
+                        if self.plotmode == "by data":
+                            self.plotsignal.emit()
                         time.sleep(self.importwavspreed / self.importspreed)

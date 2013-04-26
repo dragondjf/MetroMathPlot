@@ -45,6 +45,8 @@ import shutil
 from guidata.disthelpers import Distribution
 
 
+target_dir="MMPL"
+
 def add_image_path(path, subfolders=True):
     """Append image path (opt. with its subfolders) to global list IMG_PATH"""
     if not isinstance(path, unicode):
@@ -63,15 +65,17 @@ if __name__ == '__main__':
     dist = Distribution()
     dist.setup(name=u"Application demo", version='1.0.0',
                description=u"Application  based on MetroMathPlot.py",
-               script="MetroMathPlot.py", target_name="MetroMathPlot")
+               script="MetroMathPlot.py", target_name="MetroMathPlot",
+               target_dir=target_dir, icon="images/DMathPlot.ico")
     dist.add_modules('PyQt4', 'matplotlib', 'guidata', 'guiqwt')
+    dist.includes += ['PyQt4.Qwt5']
     dist.build('cx_Freeze')
 
     '''
         拷贝响应的图片皮肤和与项目有关的资源文件到打包目录
     '''
     for item in ['icons', 'images', 'skin', 'wavs']:
-        shutil.copytree(os.getcwd() + os.sep + item, os.getcwd() + os.sep + os.sep.join(['dist', item]))
+        shutil.copytree(os.getcwd() + os.sep + item, os.getcwd() + os.sep + os.sep.join([target_dir, item]))
 
     '''
         拷贝影响编译可执行文件运行的 第三方库 到编译目录下
@@ -79,14 +83,15 @@ if __name__ == '__main__':
     for item in ['encodings', 'scipy']:
         package = __import__(item)
         package_path = os.path.dirname(package.__file__)
-        shutil.copytree(package_path, os.getcwd() + os.sep + os.sep.join(['dist', item]))
+        shutil.copytree(package_path, os.getcwd() + os.sep + os.sep.join([target_dir, item]))
 
     '''
         将guidata库 拷贝 到编译目录下
     '''
-    gui_path = os.getcwd() + os.sep + os.sep.join(['dist', 'guidata'])
-    if os.path.isdir(gui_path):
-        shutil.rmtree(gui_path)
-        package = __import__('guidata')
-        package_path = os.path.dirname(package.__file__)
-        shutil.copytree(package_path, gui_path, symlinks=True)
+    for item in ['guidata', 'guiqwt']:
+        gui_path = os.getcwd() + os.sep + os.sep.join([target_dir, item])
+        if os.path.isdir(gui_path):
+            shutil.rmtree(gui_path)
+            package = __import__(item)
+            package_path = os.path.dirname(package.__file__)
+            shutil.copytree(package_path, gui_path, symlinks=True)
