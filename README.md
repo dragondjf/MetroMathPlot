@@ -43,6 +43,8 @@ MetroMathPlot is an application based on PyQt4 with Metro style
 >>>python setup.py build_ext --fcompiler=gnu95 build install  
 
 >>#### pyqtgraph安装
+>>> sudo apt-get install gfortran libopenblas-dev liblapack-dev ---<b>安装scipy编译依赖库</b>  
+>>> sudo apt-get install python-numpy python-scipy ---<b>安装pyqtgraph依赖库</b>  
 >>>sudo pip install pyqtgraph  
 
 
