@@ -1,24 +1,84 @@
-# We will be using py2exe to build the binaries.
-# You may use other tools, but I know this one.
+# -*- coding: utf-8 -*-
+#
+# Copyright © 2013 dragondjf
+# Pierre Raybaut
+# Licensed under the terms of the CECILL License
+# (see guidata/__init__.py for details)
 
-from distutils.core import setup
-import py2exe
+"""
+guidata.disthelper
+
+How to create an executable with py2exe or cx_Freeze with less efforts than
+writing a complete setup script.
+"""
+
+'''
+***********************************问题1***************************************************
+cx_Freeze库中的dist.py文件中的改动
+        def __init __():
+            .....
+            .....
+    135     self.bin_path_includes = []
+    136     self.bin_path_excludes = []
+
+
+        def run(self):
+            .....
+            .....
+    168     binPathIncludes = self.bin_path_includes,
+    169     binPathExcludes = self.bin_path_excludes)
+
+用于解决下面这个问题：
+    error: error in setup script: command 'build_exe' has no such option 'bin_path_includes'
+
+***********************************问题2*****************************************************
+重新定义add_image_path()函数, 主要增加如下代码
+    if 'library.zip' in path:
+        path = path.replace('/library.zip', '')
+用于解决利用guidata.disthelpers中打包guidata库时产生的报错
+    在library.zip中无法找到guidata库中的images文件夹
+
+
+'''
+import os
 import shutil
-import os
-
-from distutils.filelist import findall
-import os
+from guidata.disthelpers import Distribution
 import matplotlib
-matplotlibdatadir = matplotlib.get_data_path()
-matplotlibdata = findall(matplotlibdatadir)
-matplotlibdata_files = []
-for f in matplotlibdata:
-    dirname = os.path.join('matplotlibdata', f[len(matplotlibdatadir)+1:])
-    matplotlibdata_files.append((os.path.split(dirname)[0], [f]))
 
+if os.name != "nt":
+    def add_image_path(path, subfolders=True):
+        """Append image path (opt. with its subfolders) to global list IMG_PATH"""
+        if not isinstance(path, unicode):
+            path = fs_to_unicode(path)
+        global IMG_PATH
+        if 'library.zip' in path:
+            path = path.replace('/library.zip', '')
+        IMG_PATH.append(path)
+        if subfolders:
+            for fileobj in os.listdir(path):
+                pth = osp.join(path, fileobj)
+                if osp.isdir(pth):
+                    IMG_PATH.append(pth)
+else:
+    target_dir = "dist"
 
-data_files = matplotlib.get_py2exe_datafiles() + [
-            ('phonon_backend', [
+if __name__ == '__main__':
+
+    if os.name == "nt":
+        matplotlibdata_files = matplotlib.get_py2exe_datafiles()
+
+        dist = Distribution()
+        dist.vs2008 = None
+        dist.setup(name=u"Application demo", version='1.0.0',
+                   description=u"Application  based on MetroMathPlot.py",
+                   script="MetroMathPlot.py", target_name="MetroMathPlot",
+                   icon="images/DMathPlot.ico")
+
+        dist.add_modules('PyQt4', 'guidata', 'guiqwt')
+        dist.bin_excludes += ["libzmq.dll"]
+        dist.includes += ['PyQt4.Qwt5','matplotlib']
+        dist.data_files += matplotlibdata_files
+        dist.data_files += [('phonon_backend', [
                 'C:\Python27\Lib\site-packages\PyQt4\plugins\phonon_backend\phonon_ds94.dll'
                 ]),
             ('imageplugins', [
@@ -27,39 +87,8 @@ data_files = matplotlib.get_py2exe_datafiles() + [
             'c:\Python27\lib\site-packages\PyQt4\plugins\imageformats\qsvg4.dll',
             'c:\Python27\lib\site-packages\PyQt4\plugins\imageformats\qico4.dll',
             ])]
-# Now you need to pass arguments to setup
-# windows is a list of scripts that have their own UI and
-# thus don't need to run in a console.
 
-setup(windows=[{'script':'MetroMathPlot.py', 'icon_resources':[(1, "images\DMathPlot.ico")]}],
-      options={
-
-# And now, configure py2exe by passing more options;
-
-          'py2exe': {
-
-# This is magic: if you don't add these, your .exe may
-# or may not work on older/newer versions of windows.
-
-              "dll_excludes": [
-                  "MSVCP90.dll",
-                  "MSWSOCK.dll",
-                  "mswsock.dll",
-                  "powrprof.dll",
-                  ],
-
-# Py2exe will not figure out that you need these on its own.
-# You may need one, the other, or both.
-
-              'includes': [
-                  'sip',
-                  'PyQt4',
-                  'PyQt4.QtGui',
-                  'PyQt4.QtCore',
-                  'matplotlib.backends',
-                  'matplotlib.backends.backend_qt4agg',
-                  'matplotlib.figure'],
-              'excludes': [
+        dist.excludes += [
                   '_gtkagg',
                   '_tkagg',
                   '_agg2',
@@ -67,22 +96,48 @@ setup(windows=[{'script':'MetroMathPlot.py', 'icon_resources':[(1, "images\DMath
                   '_cocoaagg',
                   '_fltkagg',
                   '_gtk',
-                  '_gtkcairo', ],
-# Optional: make one big exe with everything in it, or
-# a folder with many things in it. Your choice
-#             'bundle_files': 1,
-          }
-      },
+                  '_gtkcairo', ]
 
-# Qt's dynamically loaded plugins and py2exe really don't
-# get along.
+        dist.build('py2exe')
 
-data_files=data_files
+        '''
+            拷贝响应的图片皮肤和与项目有关的资源文件到打包目录
+        '''
+        for item in ['icons', 'images', 'skin', 'wavs']:
+            shutil.copytree(os.getcwd() + os.sep + item, os.getcwd() + os.sep + os.sep.join(['dist', item]))
+    else:
+        dist = Distribution()
+        dist.vs2008 = None
+        dist.setup(name=u"Application demo", version='1.0.0',
+                   description=u"Application  based on MetroMathPlot.py",
+                   script="MetroMathPlot.py", target_name="MetroMathPlot",
+                   icon="images/DMathPlot.ico")
 
-# If you choose the bundle above, you may want to use this, too.
-#     zipfile=None,
-)
+        dist.add_modules('PyQt4', 'matplotlib', 'guidata', 'guiqwt')
+        dist.includes += ['PyQt4.Qwt5']
+        dist.build('cx_Freeze')
 
-shutil.copytree(os.getcwd() + os.sep + 'icons', os.getcwd() + os.sep + os.sep.join(['dist', 'icons']))
-shutil.copytree(os.getcwd() + os.sep + 'images', os.getcwd() + os.sep + os.sep.join(['dist', 'images']))
-shutil.copytree(os.getcwd() + os.sep + 'skin', os.getcwd() + os.sep + os.sep.join(['dist', 'skin']))
+        '''
+            拷贝响应的图片皮肤和与项目有关的资源文件到打包目录
+        '''
+        for item in ['icons', 'images', 'skin', 'wavs']:
+            shutil.copytree(os.getcwd() + os.sep + item, os.getcwd() + os.sep + os.sep.join([target_dir, item]))
+
+        '''
+            拷贝影响编译可执行文件运行的 第三方库 到编译目录下
+        '''
+        for item in ['encodings', 'scipy']:
+            package = __import__(item)
+            package_path = os.path.dirname(package.__file__)
+            shutil.copytree(package_path, os.getcwd() + os.sep + os.sep.join([target_dir, item]))
+
+        '''
+            将guidata库 拷贝 到编译目录下
+        '''
+        for item in ['guidata', 'guiqwt']:
+            gui_path = os.getcwd() + os.sep + os.sep.join([target_dir, item])
+            if os.path.isdir(gui_path):
+                shutil.rmtree(gui_path)
+                package = __import__(item)
+                package_path = os.path.dirname(package.__file__)
+                shutil.copytree(package_path, gui_path, symlinks=True)

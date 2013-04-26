@@ -213,6 +213,8 @@ def main():
     main = MainWindow()
     main.show()
     interactivemanager = InteractiveManager(main, **main.centeralwindow.funcpages)
+    import atexit
+    atexit._exithandlers.pop()
     sys.exit(app.exec_())
 
 if __name__ == '__main__':
