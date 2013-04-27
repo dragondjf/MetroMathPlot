@@ -42,8 +42,23 @@ cx_Freeze库中的dist.py文件中的改动
 '''
 import os
 import shutil
+import zipfile
 from guidata.disthelpers import Distribution
 import matplotlib
+
+
+def addFolderToZip(folder, zip_filename):
+    with zipfile.ZipFile(zip_filename, 'w') as zip_file:
+        def addhandle(folder, zip_file):
+            for f in os.listdir(folder):
+                full_path = os.path.join(folder, f)
+                if os.path.isfile(full_path):
+                    print 'Add file: %s' % full_path
+                    zip_file.write(full_path, full_path.split('library\\')[1])
+                elif os.path.isdir(full_path):
+                    print 'add folder: %s' % full_path
+                    addhandle(full_path, zip_file)
+        addhandle(folder, zip_file)
 
 if os.name != "nt":
     def add_image_path(path, subfolders=True):
@@ -76,7 +91,7 @@ if __name__ == '__main__':
 
         dist.add_modules('PyQt4', 'guidata', 'guiqwt')
         dist.bin_excludes += ["libzmq.dll"]
-        dist.includes += ['PyQt4.Qwt5','matplotlib']
+        dist.includes += ['PyQt4.Qwt5', 'matplotlib']
         dist.data_files += matplotlibdata_files
         dist.data_files += [('phonon_backend', [
                 'C:\Python27\Lib\site-packages\PyQt4\plugins\phonon_backend\phonon_ds94.dll'
@@ -105,6 +120,21 @@ if __name__ == '__main__':
         '''
         for item in ['icons', 'images', 'skin', 'wavs']:
             shutil.copytree(os.getcwd() + os.sep + item, os.getcwd() + os.sep + os.sep.join(['dist', item]))
+
+        library_zippath = os.getcwd() + os.sep + os.sep.join(['dist', 'library.zip'])
+        library_path = os.getcwd() + os.sep + os.sep.join(['dist', 'library'])
+        with zipfile.ZipFile(library_zippath, 'r') as zip_file:
+            zip_file.extractall(path=library_path)
+        shutil.rmtree(library_path + os.sep + 'pyqtgraph')
+        for item in ['pyqtgraph']:
+            package = __import__(item)
+            package_path = os.path.dirname(package.__file__)
+            shutil.copytree(package_path, library_path + os.sep + 'pyqtgraph')
+
+        os.remove(os.getcwd() + os.sep + os.sep.join(['dist', 'library.zip']))
+        addFolderToZip(library_path, 'dist\library.zip')
+        shutil.rmtree(library_path)
+
     else:
         dist = Distribution()
         dist.vs2008 = None
