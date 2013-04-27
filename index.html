@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="MetroMathPlot by dragondjf : App For MathPlot" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>MetroMathPlot by dragondjf</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/dragondjf">View on GitHub</a>
+
+          <h1 id="project_title">MetroMathPlot by dragondjf</h1>
+          <h2 id="project_tagline">App For MathPlot</h2>
+
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>MetroMathPlot is an application based on PyQt4 with Metro style</h1>
+
+<h4>关于</h4>
+
+<blockquote>
+<p>MetroMathPlot 是基于PyQt4开发，采用Metro风格的应用程序。  </p>
+</blockquote>
+
+<h3>如何执行</h3>
+
+<blockquote>
+<p>在cmd中执行python MetroMathPlot.py即可</p>
+</blockquote>
+
+<h3>环境搭建</h3>
+
+<p>python2.7 + PyQt4 + matplotlib +guiqwt + pyqtgraph</p>
+
+<blockquote>
+<h4>windows下环境搭建</h4>
+
+<blockquote>
+<h5>PyQt4安装</h5>
+
+<p>pip isntall python-qt</p>
+
+<h4>matplotlib 安装</h4>
+
+<p>pip install matplotlib  </p>
+</blockquote>
+
+<h4>linux下环境搭建</h4>
+
+<blockquote>
+<h5>PyQt4安装</h5>
+
+<p>sudo pip install python-qt</p>
+
+<h4>matplotlib 安装</h4>
+
+<p>pip install matplotlib  </p>
+
+<blockquote>
+<p>matlplotlib安装注意：</p>
+
+<blockquote>
+<p>1. gcc: error trying to exec ‘cc1plus’: execvp: No such file or directory</p>
+
+<blockquote>
+<p>解决方法：sudo apt-get install build-essential</p>
+</blockquote>
+
+<p>2. src/ft2font.h:13:22: fatal error: ft2build.h: No such file or directory</p>
+
+<blockquote>
+<p>解决方法：sudo apt-get install  libfreetype6-dev</p>
+</blockquote>
+
+<p>3. src/backend_agg.cpp:3:17: fatal error: png.h: No such file or directory</p>
+
+<blockquote>
+<p>解决方法：sudo apt-get install libpng-dev  </p>
+</blockquote>
+</blockquote>
+</blockquote>
+
+<h4>guiqwt安装</h4>
+
+<p>参考<a></a><a href="http://pythonhosted.org/guiqwt/installation.html#id1">http://pythonhosted.org/guiqwt/installation.html#id1</a>  </p>
+
+<blockquote>
+<p>注意：guiqwt依赖pyqwt，但linux的python-qt库中没有绑定这个库，需要额外安装，所以在装guiqwt后还需要进行如下操作:<br>
+sudo apt-get install build-essential ---<b>g++编译器</b><br>
+sudo apt-get install gfortran ---<b>gfortran 编译器</b><br>
+sudo apt-get install  python-qwt5-qt4 ---<b>python绑定的qwt5库</b><br>
+sudo pip install guidata  ---<b>guidata库</b><br>
+sudo pip install guiqwt  ---<b>guiqwt库</b><br>
+如果安装不成功 可以参考<a></a><a href="http://pythonhosted.org/guiqwt/installation.html#id1">http://pythonhosted.org/guiqwt/installation.html#id1</a><br>
+cd guiqwt<br>
+python setup.py build_ext --fcompiler=gnu95 build install  </p>
+</blockquote>
+
+<h4>pyqtgraph安装</h4>
+
+<blockquote>
+<p>sudo apt-get install gfortran libopenblas-dev liblapack-dev ---<b>安装scipy编译依赖库</b><br>
+sudo apt-get install python-numpy python-scipy ---<b>安装pyqtgraph依赖库</b><br>
+sudo pip install pyqtgraph</p>
+</blockquote>
+</blockquote>
+</blockquote>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
