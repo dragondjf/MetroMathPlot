@@ -1,83 +1,85 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Metromathplot by dragondjf</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/main.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Metromathplot : App For MathPlot" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Metromathplot</title>
   </head>
+
   <body>
 
-      <header>
-        <h1>Metromathplot</h1>
-        <p>App For MathPlot</p>
-      </header>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/dragondjf/MetroMathPlot">View on GitHub</a>
 
-      <div id="banner">
-        <span id="logo"></span>
+          <h1 id="project_title">Metromathplot</h1>
+          <h2 id="project_tagline">App For MathPlot</h2>
 
-        <a href="https://github.com/dragondjf/MetroMathPlot" class="button fork"><strong>View On GitHub</strong></a>
-        <div class="downloads">
-          <span>Downloads:</span>
-          <ul>
-            <li><a href="https://github.com/dragondjf/MetroMathPlot/zipball/master" class="button">ZIP</a></li>
-            <li><a href="https://github.com/dragondjf/MetroMathPlot/tarball/master" class="button">TAR</a></li>
-          </ul>
-        </div>
-      </div><!-- end banner -->
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/dragondjf/MetroMathPlot/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/dragondjf/MetroMathPlot/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
 
-    <div class="wrapper">
-      <nav>
-        <ul></ul>
-      </nav>
-      <section>
-        <h1>MetroMathPlot is an application based on PyQt4 with Metro style</h1>
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="metromathplot-is-an-application-based-on-pyqt4-with-metro-style" class="anchor" href="#metromathplot-is-an-application-based-on-pyqt4-with-metro-style"><span class="octicon octicon-link"></span></a>MetroMathPlot is an application based on PyQt4 with Metro style</h1>
 
-<h4>关于</h4>
+<h4>
+<a name="%E5%85%B3%E4%BA%8E" class="anchor" href="#%E5%85%B3%E4%BA%8E"><span class="octicon octicon-link"></span></a>关于</h4>
 
 <blockquote>
 <p>MetroMathPlot 是基于PyQt4开发，采用Metro风格的应用程序。  </p>
 </blockquote>
 
-<h3>如何执行</h3>
+<h3>
+<a name="%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C" class="anchor" href="#%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C"><span class="octicon octicon-link"></span></a>如何执行</h3>
 
 <blockquote>
 <p>在cmd中执行python MetroMathPlot.py即可</p>
 </blockquote>
 
-<h3>环境搭建</h3>
+<h3>
+<a name="%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA" class="anchor" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="octicon octicon-link"></span></a>环境搭建</h3>
 
 <p>python2.7 + PyQt4 + matplotlib +guiqwt + pyqtgraph</p>
 
 <blockquote>
-<h4>windows下环境搭建</h4>
+<h4>
+<a name="windows%E4%B8%8B%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA" class="anchor" href="#windows%E4%B8%8B%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="octicon octicon-link"></span></a>windows下环境搭建</h4>
 
 <blockquote>
-<h5>PyQt4安装</h5>
+<h5>
+<a name="pyqt4%E5%AE%89%E8%A3%85" class="anchor" href="#pyqt4%E5%AE%89%E8%A3%85"><span class="octicon octicon-link"></span></a>PyQt4安装</h5>
 
 <p>pip isntall python-qt</p>
 
-<h4>matplotlib 安装</h4>
+<h4>
+<a name="matplotlib-%E5%AE%89%E8%A3%85" class="anchor" href="#matplotlib-%E5%AE%89%E8%A3%85"><span class="octicon octicon-link"></span></a>matplotlib 安装</h4>
 
 <p>pip install matplotlib  </p>
 </blockquote>
 
-<h4>linux下环境搭建</h4>
+<h4>
+<a name="linux%E4%B8%8B%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA" class="anchor" href="#linux%E4%B8%8B%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="octicon octicon-link"></span></a>linux下环境搭建</h4>
 
 <blockquote>
-<h5>PyQt4安装</h5>
+<h5>
+<a name="pyqt4%E5%AE%89%E8%A3%85-1" class="anchor" href="#pyqt4%E5%AE%89%E8%A3%85-1"><span class="octicon octicon-link"></span></a>PyQt4安装</h5>
 
 <p>sudo pip install python-qt</p>
 
-<h4>matplotlib 安装</h4>
+<h4>
+<a name="matplotlib-%E5%AE%89%E8%A3%85-1" class="anchor" href="#matplotlib-%E5%AE%89%E8%A3%85-1"><span class="octicon octicon-link"></span></a>matplotlib 安装</h4>
 
 <p>pip install matplotlib  </p>
 
@@ -105,7 +107,8 @@
 </blockquote>
 </blockquote>
 
-<h4>guiqwt安装</h4>
+<h4>
+<a name="guiqwt%E5%AE%89%E8%A3%85" class="anchor" href="#guiqwt%E5%AE%89%E8%A3%85"><span class="octicon octicon-link"></span></a>guiqwt安装</h4>
 
 <p>参考<a></a><a href="http://pythonhosted.org/guiqwt/installation.html#id1">http://pythonhosted.org/guiqwt/installation.html#id1</a>  </p>
 
@@ -121,7 +124,8 @@ cd guiqwt<br>
 python setup.py build_ext --fcompiler=gnu95 build install  </p>
 </blockquote>
 
-<h4>pyqtgraph安装</h4>
+<h4>
+<a name="pyqtgraph%E5%AE%89%E8%A3%85" class="anchor" href="#pyqtgraph%E5%AE%89%E8%A3%85"><span class="octicon octicon-link"></span></a>pyqtgraph安装</h4>
 
 <blockquote>
 <p>sudo apt-get install gfortran libopenblas-dev liblapack-dev ---<b>安装scipy编译依赖库</b><br>
@@ -131,22 +135,27 @@ sudo pip install pyqtgraph  </p>
 </blockquote>
 </blockquote>
       </section>
-      <footer>
-        <p>Project maintained by <a href="https://github.com/dragondjf">dragondjf</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></small></p>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Metromathplot maintained by <a href="https://github.com/dragondjf">dragondjf</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
               <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
           <script type="text/javascript">
             try {
-              var pageTracker = _gat._getTracker("123");
+              var pageTracker = _gat._getTracker("pyqt4,Metro,python,matplotlib,pyqtgraph, guiqwt");
             pageTracker._trackPageview();
             } catch(err) {}
           </script>
+
 
   </body>
 </html>
